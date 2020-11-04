@@ -7,7 +7,7 @@ import hashlib, os
 import bcrypt
 
 import click
-from flask import Flask, request, render_template, current_app, g, session, flash
+from flask import Flask, request, render_template, current_app, g, session, flash, redirect
 from flask.cli import with_appcontext
 
 app = Flask(__name__)
@@ -23,10 +23,13 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 #Call when we clic on the submit button on the login page
 @app.route('/', methods=["GET", "POST"])
 def Login():
+
+    pageToLoad = "loginPage.html"
+
     if(request.method == 'POST'):
         print("the request method is POST")
-        if(len(session)==0):
-            print("The session lent is egal to 0")
+        if(session.get("username") is None):
+            print("The session username is none, so the user isn't connected")
             #Get what the username and password enter in the field of the html page
             usernameFromTheForm = request.form['username']
             passwordFromTheForm = request.form['password']
@@ -51,37 +54,38 @@ def Login():
                     session["username"] = usernameFromTheForm
                     print("Who's conneted : "+session["username"])
                     res = "Connected"
+                    pageToLoad = "gamePage.html"
                 else:
                     res = "Not connected"
             else:
                 print("Error maybe the user doesn't exist")
                 res = "Error, the user doesn't exist"
                 #Redirect to the register page
-            return render_template('registerPage.html')
+                pageToLoad= 'registerPage.html'
         else:
             #That mean the session variable is not null
-            print(session['username'])
-            return render_template('gamePage.html')
+            if(session.get("username") is not None):
+                print(session['username'])
+            
+            #return render_template('gamePage.html')
+            pageToLoad= 'gamePage.html'
     else:
         #That mean the request.method is egal to GET
         #So just check if the user is already connect or not
-        print("the request method is GET")
-        if(len(session)!=0):
-            #That mean the user is already login
-            #Just show the next page (game page)
-            return render_template('gamePage.html', data = session)
+        if(session.get("username") is not None):
+            pageToLoad= 'gamePage.html'
         else:
-            #That mean the user isn't login yet, so show the login page
-            return render_template('loginPage.html')
+            pageToLoad= 'loginPage.html'
+        
 
-    return print("end")
+    return render_template(pageToLoad)
 
 #Route for the logout
 @app.route('/logout')
 def logout():
     #Destruct the username index in the session variable
     session.pop("username", None)
-    return redirect(url_for(""))
+    return redirect("/")
 
 
 #When we call the register route, that will call the register template aka (registerPage.html)
