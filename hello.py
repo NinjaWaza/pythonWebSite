@@ -14,11 +14,6 @@ app = Flask(__name__)
 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
-#When we call the main route, that will call the main template aka (mainPage.html)
-#@app.route('/')
-#def afterLogin():
-    #return render_template('loginPage.html')
-
 #When we call the main page (route)
 #Call when we clic on the submit button on the login page
 @app.route('/', methods=["GET", "POST"])
@@ -90,30 +85,29 @@ def logout():
 
 #When we call the register route, that will call the register template aka (registerPage.html)
 @app.route('/registerPage', methods=["GET", "POST"])
-def registerAsAUser():
+def registerAUser():
+    print("We in registerAUser function")
     #If it's with POST method that will call the createAnAccount Function
-    if(requests.method == 'POST'):
-        def createAnAccount():
-            #Get what the user enter in the field of the html page
-            usernameOfTheAccount = request.form['username']
-            passwordOfTheAccount = request.form['password']
+    if(request.method == 'POST'):
+        print("We are going to insert a user in the database")
+        #Get what the user enter in the field of the html page
+        usernameOfTheAccount = request.form['username']
+        passwordOfTheAccount = request.form['password']
 
-            passwordOfTheAccount = encodeAPassword(passwordOfTheAccount)
+        passwordOfTheAccount = hashAPassword(passwordOfTheAccount)
 
-            myDatabaseAccess = get_db()
-
-            resultatRequest = myDatabaseAccess.execute("INSERT INTO user(username,password) VALUES(?,?)", usernameOfTheAccount,passwordOfTheAccount)
-    
-            print(resultatRequest)
-
-            #Save in the session variable the username of the user
-            #session["username"] = usernameFromTheForm
+        myDatabaseAccess = get_db()
+        infosUser = [usernameOfTheAccount,passwordOfTheAccount]
+        resultatRequest = myDatabaseAccess.execute("INSERT INTO user(username,password) VALUES(?,?)", infosUser)
+        myDatabaseAccess.commit()
+        print("That mean we have create the user in the database")
+        #Save in the session variable the username of the user
+        session["username"] = infosUser[0]
+        return redirect("/")
     #Else If it's with GET method that will call the render_template function to load the registerPage.html template
     else:
+        #If we are here that mean the request.method is GET
         return render_template('registerPage.html')
-
-
-
 
 #Database access
 def get_db():
