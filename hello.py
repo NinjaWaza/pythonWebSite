@@ -53,11 +53,11 @@ def deleteAccount():
         myDatabaseAccess = get_db() #Get the database in a variable, we are going to use this variable later to insert, update and select values
         resultatRequest = myDatabaseAccess.execute("SELECT password FROM user WHERE username = '%s'" % session['username']).fetchone() #Get the password from the database, password that match with the username that the user give in the form
         passwordAndHashReturnFromTheDatabase = resultatRequest[0]
-        if(checkTheValidityOfThePassword(request.form['password'], passwordAndHashReturnFromTheDatabase)):
-            myDatabaseAccess.execute("DELETE FROM user WHERE username = '%s'"% session.get('username'))
-            myDatabaseAccess.commit()
-            print(f"The user {session['username']} have been deleted")
-    return redirect("/logout")
+        if(checkTheValidityOfThePassword(request.form['password'], passwordAndHashReturnFromTheDatabase)): #If the password matched
+            myDatabaseAccess.execute("DELETE FROM user WHERE username = '%s'"% session.get('username')) #Delete the user in the local database
+            myDatabaseAccess.commit() #Commit the modification (the delete)
+            print(f"The user {session['username']} have been deleted") #Just for having some log in the console (and for debug)
+    return redirect("/logout") #Redirect to the logout function
 
 
 @app.route('/logout') #Route for the logout
