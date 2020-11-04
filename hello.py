@@ -14,72 +14,67 @@ app = Flask(__name__)
 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
-#salt = os.urandom(32)
-
-#f = open("salt.txt", "w")
-#f.write(str(salt))
-#f.close()
-
-#f = open("salt.txt", "r")
-#salt = f.read()
-#f.close()
-
-salt = b'\x11\x9b\x97\xba\xa0\xa1L?\x07\x1f\xf1\xee~\x95\x98\xa3$$Q1\x8dc\xf6\xaa\xba\x7f<y\xe6\xef\xc75'
-
 #When we call the main route, that will call the main template aka (mainPage.html)
-@app.route('/')
-def login():
-    return render_template('loginPage.html')
+#@app.route('/')
+#def afterLogin():
+    #return render_template('loginPage.html')
 
+#When we call the main page (route)
 #Call when we clic on the submit button on the login page
-@app.route('/', methods=['POST'])
-def afterLogin():
-    #Get what the user enter in the field of the html page
-    usernameFromTheForm = request.form['username']
-    passwordFromTheForm = request.form['password']
+@app.route('/', methods=["GET", "POST"])
+def Login():
+    if(request.method == 'POST'):
+        print("the request method is POST")
+        if(len(session)==0):
+            print("The session lent is egal to 0")
+            #Get what the username and password enter in the field of the html page
+            usernameFromTheForm = request.form['username']
+            passwordFromTheForm = request.form['password']
 
-    myDatabaseAccess = get_db()
-    print("DEBUGGGG !!!!!!!!!!!!!!!!!")
-    #print(hashAPassword("MyPassword"))
+            #Get the database in a variable
+            #We are going to use this variable later to insert, update and select values
+            myDatabaseAccess = get_db()
 
-    #print(hashAPassword("MyPassword"))
+            #Get the password from the database, password that match with the username that the user give in the form
+            resultatRequest = myDatabaseAccess.execute("SELECT password FROM user WHERE username = '%s'" % usernameFromTheForm).fetchone()
+            #Check if the result of the SQL request is egal to none
+            if(resultatRequest is not None):
+                #Get the password in a variable
+                passwordAndHashReturn = resultatRequest[0]
+                if(passwordAndHashReturn !=""):
+                    passwordFromTheDatabase = passwordAndHashReturn
+                    passwordAreTheSame = checkTheValidityOfThePassword(passwordFromTheForm,passwordFromTheDatabase)
 
-    resultatRequest = myDatabaseAccess.execute("SELECT password FROM user WHERE username = '%s'" % usernameFromTheForm).fetchone()
-    if(resultatRequest is not None):
-        passwordAndHashReturn = resultatRequest[0]
-        if(passwordAndHashReturn !=""):
-            passwordFromTheDatabase = passwordAndHashReturn
-            passwordAreTheSame = checkTheValidityOfThePassword(passwordFromTheForm,passwordFromTheDatabase)
-
-        if(passwordAreTheSame):
-            print(f"The user : {usernameFromTheForm} is now connected")
-            res = "Connected"
+                if(passwordAreTheSame):
+                    print(f"The user : {usernameFromTheForm} is now connected")
+                    #Save in the session variable the username of the user
+                    session["username"] = usernameFromTheForm
+                    print("Who's conneted : "+session["username"])
+                    res = "Connected"
+                else:
+                    res = "Not connected"
+            else:
+                print("Error maybe the user doesn't exist")
+                res = "Error, the user doesn't exist"
+                #Redirect to the register page
+            return render_template('registerPage.html')
         else:
-            flash('You are not connected')
-            #print("Error in login, check your password")
-            #print("The database password : ",passwordFromTheDatabase)
-            #print("Your password hashed: ",passwordFromTheForm)
-            res = "Not connected"    
+            #That mean the session variable is not null
+            print(session['username'])
+            return render_template('gamePage.html')
     else:
-        print("Error with the password, maybe the user doesn't exist or the password is just false")
-        res = "Error, the user doesn't exist"
-        #Redirect to the register page
-    #Save in the session variable the username of the user
-    #session["username"] = usernameFromTheForm
-    
-    #print(passwordFromTheDatabase)
-    #if(passwordFromTheForm == passwordFromTheDatabase):
-        #flash('You are now connected')
-        #res = "oui"
-        #res = render_template('afterLogin.html', name=usernameFromTheForm)
-    #else:
-        #res = "non"
-    
-    #If the connexion is a success we can create the cookie session
-    #cookie = make_response(render_template('loginPage.html'))
-    #cookie.set_cookie('username', request.form['username'])
-    #username = request.cookies.get('username')
-    return res
+        #That mean the request.method is egal to GET
+        #So just check if the user is already connect or not
+        print("the request method is GET")
+        if(len(session)!=0):
+            #That mean the user is already login
+            #Just show the next page (game page)
+            return render_template('gamePage.html', data = session)
+        else:
+            #That mean the user isn't login yet, so show the login page
+            return render_template('loginPage.html')
+
+    return print("end")
 
 #Route for the logout
 @app.route('/logout')
@@ -149,35 +144,6 @@ def init_db_command():
 
 app.teardown_appcontext(close_db)
 app.cli.add_command(init_db_command)
-
-#This function will be used to check the validity of a password
-def checkAPassword(passwordFromTheForm,hashAndSaltFromTheDatabase):
-
-    thepasswordFromTheFormEncoded = hashlib.pbkdf2_hmac(
-    'sha256',
-    passwordFromTheForm.encode('utf-8'), # Convert the password to bytes
-    salt, 
-    100000
-    )
-    #Debuge zone -------------------------------------------------------
-    print("In the checkAPassword Function, the database password (hashed): ",passwordFromTheDatabase)
-    print("In the checkAPassword Function, the form password (hashed): ",thepasswordFromTheFormEncoded)
-    #Debuge zone -------------------------------------------------------
-
-    if(thepasswordFromTheFormEncoded == passwordFromTheDatabase):
-        return True
-    else:
-        return False
-
-#This function will be used to encode a password before insert it in the database
-def encodeAPassword(passwordToEncode):
-    theKey = hashlib.pbkdf2_hmac(
-    'sha256',
-    passwordToEncode.encode('utf-8'), # Convert the password to bytes
-    salt, 
-    100000
-    )
-    return theKey
 
 #This function will be used to encode a password before insert it in the database
 def hashAPassword(thePasswordToHash):

@@ -1,25 +1,40 @@
 <html>
     <style>
-        .welcomeMessage{
+        .registerPage{
             text-align:center;
             font-size: 35px;
-            margin-top: 180px;
+            margin-top: 30px;
         }
 
-        .formLogin{
+        .formRegister{
             text-align:center;
             font-size: 25px;
             margin-top: 100px;
         }
-    </style>
-    <!-- Welcome message -->
-    <p class="registerPage">
+
+        .loginButton{
+            margin-right: 15px;
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .loginButton button{
+            width: 450px;
+            font-size: 150px;
+            color: red;
+            background-color: darkkhaki;
+        }
+    </style>    
+    <div class="loginButton">
+        <button onclick="window.location.href='/'">Login</button>
+    </div>
+    <div class="registerPage">
         Register page of : DigitaGame
         <br><br>
         <p>
             Please create your account with a unique username and a <strong>STRONG</strong> password !
         </p>
-    </p>
+    </div>
     <div class="formRegister">
         <form method="POST">
             <label for="username">Username :</label>
