@@ -47,6 +47,19 @@ def Login():
             pageToLoad = 'loginPage.html' #Set the pageToLoad variable to loginPage.html
     return render_template(pageToLoad) #Rendering the template with the variable pageToLoad
 
+@app.route('/deleteAccount', methods=["POST"]) #Route for deleting the current account
+def deleteAccount():
+    if(session.get("username") is not None): #That a check to be sure we are connected
+        myDatabaseAccess = get_db() #Get the database in a variable, we are going to use this variable later to insert, update and select values
+        resultatRequest = myDatabaseAccess.execute("SELECT password FROM user WHERE username = '%s'" % session['username']).fetchone() #Get the password from the database, password that match with the username that the user give in the form
+        passwordAndHashReturnFromTheDatabase = resultatRequest[0]
+        if(checkTheValidityOfThePassword(request.form['password'], passwordAndHashReturnFromTheDatabase)):
+            myDatabaseAccess.execute("DELETE FROM user WHERE username = '%s'"% session.get('username'))
+            myDatabaseAccess.commit()
+            print(f"The user {session['username']} have been deleted")
+    return redirect("/logout")
+
+
 @app.route('/logout') #Route for the logout
 def logout():
     """The logout function will destruct everything in the session and then redirect to the main route."""
