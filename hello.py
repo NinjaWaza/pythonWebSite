@@ -22,24 +22,10 @@ def Login():
     """The login function will try to connect the user, if the username doesn't exist in the database, that will redirect the user to the registerPage.html."""
     pageToLoad = "loginPage.html" #Default value of the pageToLoad
     if(request.method == 'POST'):
-        if(session.get("username") is None): #If the username is not in the session
-            myDatabaseAccess = get_db() #Get the database in a variable, we are going to use this variable later to insert, update and select values
-            resultatRequest = myDatabaseAccess.execute("SELECT password FROM user WHERE username = '%s'" % request.form['username']).fetchone() #Get the password from the database, password that match with the username that the user give in the form
-            if(resultatRequest is not None): #Check if the result of the SQL request is not egal to none
-                passwordAndHashReturn = resultatRequest[0]
-                if(passwordAndHashReturn !=""): #If the result is not null
-                    passwordAreTheSame = checkTheValidityOfThePassword(request.form['password'],passwordAndHashReturn)
-                if(passwordAreTheSame): #If the both passwords matched
-                    print(f"The user : {request.form['username']} is now connected") #Useful to make log in the console of the flask "server" and to debug
-                    session["username"] = request.form['username'] #Save in the session variable the username of the user
-                    pageToLoad = "gamePage.html" #Set the pageToLoad variable to gamePage.html
-                else:
-                    pageToLoad = "loginPage.html" #Set the pageToLoad variable to loginPage.html
-            else:
-                pageToLoad= "registerPage.html" #Set the pageToLoad variable to registerPage.html
-        else: #That mean the username if set in the session
-            print(f"The user : {request.form['username']} is already connected") ##Useful to make log in the console of the flask "server" and to debug
-            pageToLoad= 'gamePage.html' #Set the pageToLoad variable to gamePage.html
+        #Make an instance of the user
+        #Call the User constructor
+        theConnectedUser = User(request.form['username'],request.form['password']) #Give the parameters that the function __init__ need
+        pageToLoad = session["pageToLoad"]
     else: #That mean the request.method is egal to GET
         if(session.get("username") is not None): #Check if the user is already connect or not
             pageToLoad = 'gamePage.html' #Set the pageToLoad variable to gamePage.html
@@ -64,7 +50,9 @@ def deleteAccount():
 def logout():
     """The logout function will destruct everything in the session and then redirect to the main route."""
     for value in session.copy():
+        usernameOfTheUserBeforeLogout = session["username"]
         session.pop(value, None) #Destruct all values in the session
+        
     return redirect("/") #Redirect to the main route
 
 @app.route('/registerPage', methods=["GET", "POST"]) #Route for the register page
@@ -128,4 +116,38 @@ def checkTheValidityOfThePassword(thePasswordToCheck, hashAndSaltFromTheDatabase
     """Check the validity of a password with and password/salt couple of value."""
     return bcrypt.checkpw(thePasswordToCheck.encode('utf-8'), hashAndSaltFromTheDatabase.encode('utf-8'))
 
-#
+#Class User
+class User:
+    def __init__(self,username,password):
+        self.username = username #Set the usename of the User object
+        self.password = password #Set the password of the User object
+        self.connected = False
+        self.listOfHero = [] #Initialize the list as empty
+
+        if(session.get("username") is None): #If the username is not in the session, yet
+            #To initialize the user we have to check if the username and password is valid
+            myDatabaseAccess = get_db() #Get the database in a variable, we are going to use this variable later to select, insert, update values
+            resultatRequest = myDatabaseAccess.execute("SELECT password,id FROM user WHERE username = '%s'" % self.username).fetchone() #Get the password and the id from the database, password and id that match with the username that the user give in the form
+            if(resultatRequest is not None): #Check if the result of the SQL request is not egal to none
+                passwordAndHashReturn = resultatRequest[0]
+                self.id = resultatRequest[1] #Set the User id in the object variable
+                if(passwordAndHashReturn !=""): #If the result is not null
+                    passwordAreTheSame = checkTheValidityOfThePassword(self.password,passwordAndHashReturn)
+                if(passwordAreTheSame): #If the both passwords matched
+                    print(f"The user : {request.form['username']} is now connected") #Useful to make log in the console of the flask "server" and to debug
+                    self.connected = True #Set the connected var to True
+                    session["username"] = self.username #Save in the session variable the username of the user
+                    session["pageToLoad"] = "gamePage.html" #Set the pageToLoad variable session to gamePage.html
+                else:
+                    session["pageToLoad"] = "loginPage.html" #Set the pageToLoad variable session to loginPage.html
+            else:
+                session["pageToLoad"] = "registerPage.html" #Set the pageToLoad variable session to registerPage.html
+        else: #That mean the username if set in the session
+            print(f"The user : {self.username} is already connected") ##Useful to make log in the console of the flask "server" and to debug
+            session["pageToLoad"] = "gamePage.html" #Set the pageToLoad variable session to gamePage.html
+
+    def __getUserUsername__(self):
+        return self.username
+
+    def __setTheList__(self):
+        pass
