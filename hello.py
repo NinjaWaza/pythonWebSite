@@ -52,7 +52,7 @@ def logout():
     for value in session.copy():
         usernameOfTheUserBeforeLogout = session["username"]
         session.pop(value, None) #Destruct all values in the session
-        
+
     return redirect("/") #Redirect to the main route
 
 @app.route('/registerPage', methods=["GET", "POST"]) #Route for the register page
@@ -151,3 +151,61 @@ class User:
 
     def __setTheList__(self):
         pass
+
+#Class Entity
+class Entity:
+    def __init__(self,name,lvl,weapon,armor,passive):
+        self.name = name
+        self.lvl = lvl
+        self.weapon = weapon
+        self.armor = armor
+        self.passive = passive
+
+#Class Hero (extend from Entity)
+class Hero(Entity):
+    def __init__(self,name,lvl,weapon,armor,passive,questbook,sexe):
+        Hero.init(name,lvl,weapon,armor,passive)
+        self.questbook = questbook
+        self.sexe = sexe
+
+#Class Monster (extend from Entity)
+class Monster(Entity):
+    def __init__(self,name,lvl,weapon,armor,passive,someAttributs):
+        Hero.init(name,lvl,weapon,armor,passive)
+        self.someAttributs = someAttributs
+
+#Class QuestBook (contain some quests)
+class QuestBook:
+    def __init__(self,type,quests):
+        self.type = type
+        if(not quests):
+            self.quests = [] #Initialize the list as empty
+        else:
+            self.quests = quests
+
+    def addQuests(self,aQuestToAdd):
+        self.quests.append(aQuestToAdd) #That will add the quest to the end of the list
+
+#Class Quest (contain some steps)
+class Quest:
+    def __init__(self,id,steps):
+        self.id = id
+        if(not steps):
+            self.steps = [] #Initialize the list as empty
+        else:
+            self.steps = steps
+
+    def addSteps(self,aStepToAdd):
+        self.steps.append(aStepToAdd) #That will add the step to the end of the list
+
+#Class Step
+class Step:
+    def __init__(self,id,text):
+        self.id = id
+        self.text = text
+
+    def setTheStepText(self,text):
+        self.text = text
+
+    def getTheStepText(self):
+        return self.text
