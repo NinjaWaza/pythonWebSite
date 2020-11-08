@@ -1,9 +1,33 @@
 <html>
+    <style>
+        .theHeroDiv{
+            color:rgb(68, 68, 68);
+            border: 1px solid black;
+            border-radius: 5px;
+            border-width:2px;
+            padding: 20px;
+            width:65%;
+        }
+    </style>
     <div class="logoutButton">
         <button onclick="window.location.href='/logout'">Logout</button>
     </div>
     <p>
         Hello : {{ session["username"] }}
+        <br />
+        {% for aHero in theHeroes[0] %}
+        <div class="theHeroDiv">
+            <p>Username of your hero : <strong>{{aHero.getTheNameOfTheHero()}}</strong></p>
+            {% if aHero.sexe == 0 %}
+                <p>The sexe of your hero is : Male</p>
+            {% else %}
+                <p>The sexe of your hero is : Female</p>
+            {% endif %}
+            <p>Weapon : <strong>{{aHero.weapon}}</strong></p>
+            <p>Your hero is currently at this quest : {{aHero.getNumQuest()}}, and your step in this quest is : {{ aHero.numStep }} maybe your are blocked ? need help noob ?</p>
+        </div>
+        <br />
+        {% endfor %}
     </p>
 
     <div class="deleteAccount">
