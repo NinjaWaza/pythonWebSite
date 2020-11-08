@@ -20,39 +20,49 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 @app.route('/', methods=["GET", "POST"]) #Route for the login/register/game page
 def Login():
     """The login function will try to connect the user, if the username doesn't exist in the database, that will redirect the user to the registerPage.html."""
-    theQuestBook = createTheQuestBook()
+    theQuestBook = createTheQuestBook() #Initialize the questBook var with the createTheQuestBook function (that will get the info directly from the database)
     pageToLoad = "loginPage.html" #Default value of the pageToLoad
     if(request.method == 'POST'):
+        global theConnectedUser #Set theConnectedUser to global to can add new hero in the /createAHero route
         theConnectedUser = User.login(request.form['username'],request.form['password']) #Initialize the user with the username and the password
-        session["username"] = theConnectedUser.getUserUsername()
-        pageToLoad = session["pageToLoad"] #Refresh the pageToLoad variable with the session pageToLoad var
-        theQuestBook = createTheQuestBook() #Initialise the quest book
-        
-        #theNewHero = Hero("GetRekt",1,"Dague",15,"Manger",0,numQuest = 0,numStep = 0)
-        #theConnectedUser.addAHeroToTheList(theNewHero)
+        print(theConnectedUser)
+        if(theConnectedUser is not None):
+            if(theConnectedUser == "ErrorWithTheUsername"):
+                pageToLoad = "registerPage.html" #Set the pageToLoad var to registerPage.html because the global keyword doesn't work as expected
+                return render_template(pageToLoad)
+            else:
+                if(theConnectedUser == "ErrorWithThePassword"):
+                    pageToLoad = "loginPage.html" #Set the pageToLoad var to loginPage.html because the global keyword doesn't work as expected
+                    return render_template(pageToLoad)
+                else:
+                    session["username"] = theConnectedUser.getUserUsername()
+                    session["idOfTheConnectedUser"] = theConnectedUser.id
+                    pageToLoad = session["pageToLoad"] #Refresh the pageToLoad variable with the session pageToLoad var
+                    theQuestBook = createTheQuestBook() #Initialise the quest book
+            
+                    theHeroesList = theConnectedUser.getTheListOfHeroes()
+                    pageToLoad = "gamePage.html" #Set the pageToLoad variable to gamePage.html
+                    return render_template(pageToLoad, theHeroes=[theHeroesList])
 
-
-        #Only for Logs/Debug
+        #Only for Logs/Debug               ---------------------
         print("All the quest of the quest book")
         for aQuest in theQuestBook.getAllQuests():
             print("Quest id : "+ str(aQuest.idOfTheQuest))
             print(aQuest.toString())
-
+        #End of the "for Logs/Debug" block ---------------------
         
     else: #That mean the request.method is egal to GET
         if(session.get("username") is not None): #Check if the user is already connect or not
-            pageToLoad = 'gamePage.html' #Set the pageToLoad variable to gamePage.html
+            if(theConnectedUser.id is not None):
+                theHeroesList = theConnectedUser.getTheListOfHeroes()
+                pageToLoad = "gamePage.html" #Set the pageToLoad variable to gamePage.html
+                return render_template(pageToLoad, theHeroes=[theHeroesList])
         else:
-            pageToLoad = 'loginPage.html' #Set the pageToLoad variable to loginPage.html
-    if(pageToLoad == "gamePage.html"):
-        theHeroes = theConnectedUser.getTheListOfHeroes()
-        return render_template(pageToLoad, theHeroes=[theHeroes])
+            pageToLoad = 'loginPage.html' #Set the pageToLoad variable to loginPage.html        
     return render_template(pageToLoad) #Rendering the template with the variable pageToLoad
 
 def createTheQuestBook():
-    theQuestBook = QuestBook() #Initiliaze the quest book
-    return theQuestBook
-
+    return QuestBook() #Initiliaze the quest book
 
 @app.route('/deleteAccount', methods=["POST"]) #Route for deleting the current account
 def deleteAccount():
@@ -66,14 +76,28 @@ def deleteAccount():
             print(f"The user {session['username']} have been deleted") #Just for having some log in the console (and for debug)
     return redirect("/logout") #Redirect to the logout function
 
-
 @app.route('/logout') #Route for the logout
 def logout():
     """The logout function will destruct everything in the session and then redirect to the main route."""
     for value in session.copy():
         session.pop(value, None) #Destruct all values in the session
-
     return redirect("/") #Redirect to the main route
+
+@app.route('/createAHero', methods=["GET", "POST"]) #Route for create a new hero
+def createAHero():
+    """The createAHero function will create a hero and add it to the database and then redirect to the main route."""
+    idOfTheConnectedUser = session["idOfTheConnectedUser"]
+    if(request.method == 'POST'):
+        #We have to check if the hero name doesn't already exist in the database
+        
+        theNewHero = Hero.createATotallyNewHero(idOfTheConnectedUser) #Create the hero and add it directly in the database
+        if(theNewHero is not None): #If the Hero.createATotallyNewHero() returning a hero
+            theConnectedUser.addAHero(theNewHero)
+        #theNewHero = Hero(request.form['nameOfTheHero'],0,request.form['weaponOfTheHero'],10,request.form['passiveOfTheHero'],request.form['sexeOfTheHero'],theConnectedUser.id)
+        #theConnectedUser.addAHeroToTheListAndInTheDatabase(theNewHero) #Add the hero to the list of hero of the user and in the database at the same time
+        return redirect("/") #And finally redirect to the main route, that will see the user is connected and then call the right template to show
+    else:
+        return redirect("/") #Redirect to the main route #Because that mean we are with the Get method and it's impossible cause we are creating a hero
 
 @app.route('/registerPage', methods=["GET", "POST"]) #Route for the register page
 def registerAUser():
@@ -153,8 +177,10 @@ class User:
                 return User(resultatRequest[1],username) #Return the user we just create cause the login informations are correct
             else:
                 session["pageToLoad"] = "loginPage.html" #Set the pageToLoad variable session to loginPage.html
+                return "ErrorWithThePassword"
         else:
             session["pageToLoad"] = "registerPage.html" #Set the pageToLoad variable session to registerPage.html
+            return "ErrorWithTheUsername"
         return None #Return None because the user informations give in the form are incorrect
 
     def __init__(self,id,username):
@@ -167,6 +193,7 @@ class User:
         self.listOfHero.append(theHeroToAdd)
     
     def showAllHeroes(self):
+        """This function is here for the Log/Debug"""
         for aHero in self.listOfHero:
             print(aHero.toString())
 
@@ -180,15 +207,6 @@ class User:
             for resultRow in resultatOfTheRequest:
                 aHero = Hero(resultRow[0],resultRow[1],resultRow[2],resultRow[3],resultRow[4],resultRow[5],resultRow[6],resultRow[7]) #Create the intance of the hero
                 self.addAHero(aHero) #Add the hero to the list of hero of the user
-    
-    def addAHeroToTheList(self,theHeroToAdd): #This function have to be called when you want to add a new hero and add it in the database at the same time
-        self.listOfHero.append(theHeroToAdd) #Add it in the listOfHero attribut
-        #Add the hero in the database
-        myDatabaseAccess = get_db() #Get the database in a variable, we are going to use this variable later to select, insert, update values
-        infosHero = [theHeroToAdd.name,theHeroToAdd.lvl,theHeroToAdd.weapon,theHeroToAdd.armor,theHeroToAdd.passive,theHeroToAdd.sexe,self.id] #Initialise the infosHero var, we are going to give to the execute function to insert the hero in the database
-        resultatRequest = myDatabaseAccess.execute("INSERT INTO hero(nameOfTheHero,lvl,weapon,armor,passive,sexe,idUser) VALUES(?,?,?,?,?,?,?)", infosHero) #Insert into the database the hero
-        resultOfTheCommit = myDatabaseAccess.commit()
-        print(resultOfTheCommit) #Save the change in the database.db file
 
     def getTheListOfHeroes(self):
         return self.listOfHero
@@ -204,11 +222,12 @@ class Entity:
 
 #Class Hero (extend from Entity)
 class Hero(Entity):
-    def __init__(self,name,lvl,weapon,armor,passive,sexe,numQuest = 0,numStep = 0):
+    def __init__(self,name,lvl,weapon,armor,passive,sexe,idOfTheUser,numQuest = 0,numStep = 0):
         Entity.__init__(self,name,lvl,weapon,armor,passive)
         self.sexe = sexe
         self.numQuest = numQuest
         self.numStep = numStep
+        self.idOfTheUser = idOfTheUser
     
     def getTheNameOfTheHero(self):
         return self.name
@@ -219,6 +238,21 @@ class Hero(Entity):
     def getNumQuest(self):
         return self.numQuest
 
+    @staticmethod
+    def createATotallyNewHero(idOfTheConnectedUser):
+        #We have to get the last step id for this specific quest
+        myDatabaseAccess = get_db() #Get the database in a variable
+
+        #Before everything we have to check if the name is unique or not
+        resultatRequest = myDatabaseAccess.execute("SELECT nameOfTheHero FROM hero WHERE nameOfTheHero = '%s'" % request.form['nameOfTheHero']).fetchone() #Get the hero name that match with the hero name that the user give in the form (useful to check if the hero name already exist in the database)
+        if(resultatRequest is None): #Check if the result of the SQL request is to none, that will mean no hero already have this name
+            infosHero = [request.form['nameOfTheHero'],request.form['weaponOfTheHero'],request.form['passiveOfTheHero'],request.form['sexeOfTheHero'],idOfTheConnectedUser]
+            resultatOfTheInsertRequest = myDatabaseAccess.execute("INSERT INTO hero(nameOfTheHero,weapon,passive,sexe,idUser) VALUES(?,?,?,?,?)", infosHero) #Insert into the database the hero
+            resultatOfTheInsertRequest = myDatabaseAccess.commit() #Save the change in the database.db file
+            theNewHero = Hero(request.form['nameOfTheHero'],1,request.form['weaponOfTheHero'],0,request.form['passiveOfTheHero'],request.form['sexeOfTheHero'],idOfTheConnectedUser) #Create a Hero object
+            return theNewHero #Return this hero object
+        return None #Return none because we can't successfully create the hero in the database, maybe the hero name is already taken
+
 #Class Monster (extend from Entity)
 class Monster(Entity):
     def __init__(self,name,lvl,weapon,armor,passive,someAttributs):
@@ -227,6 +261,7 @@ class Monster(Entity):
 
 #Class QuestBook (contain some quests)
 class QuestBook:
+    """The QuestBook class represente all the quest of the game, at the instanciation time that will get in the database the different quests and their step"""
     def __init__(self,quests = None):
         if(not quests):
             self.quests = list() #Initialize the list as empty
@@ -265,7 +300,6 @@ class Quest:
             self.steps = list() #Initialize the list as empty
         else:
             self.steps = steps
-
         self.initilaliseTheStepsFromTheDatabase() #Get all the steps store in the database
 
     @staticmethod
@@ -293,6 +327,7 @@ class Quest:
         self.steps.append(aStepToAdd) #That will add the step to the end of the list
 
     def toString(self): #Print all the steps of a quest | Use only for debug during development
+        """This function is here for the Log/Debug"""
         for aStep in self.steps:
             print(aStep.toString())
 
@@ -310,6 +345,7 @@ class Step:
         return self.text
     
     def toString(self): #Return the text of a step | Use only for debug during development
+        """This function is here for the Log/Debug"""
         return "Step number : " + str(self.stepNumber) + " you have to do : " + self.text
     
     @staticmethod

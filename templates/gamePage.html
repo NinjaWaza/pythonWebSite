@@ -15,25 +15,60 @@
     <p>
         Hello : {{ session["username"] }}
         <br />
-        {% for aHero in theHeroes[0] %}
-        <div class="theHeroDiv">
-            <p>Username of your hero : <strong>{{aHero.getTheNameOfTheHero()}}</strong></p>
-            {% if aHero.sexe == 0 %}
-                <p>The sexe of your hero is : Male</p>
-            {% else %}
-                <p>The sexe of your hero is : Female</p>
-            {% endif %}
-            <p>Weapon : <strong>{{aHero.weapon}}</strong></p>
-            <p>Your hero is currently at this quest : {{aHero.getNumQuest()}}, and your step in this quest is : {{ aHero.numStep }} maybe your are blocked ? need help noob ?</p>
-        </div>
+        {% if theHeroes !="" %}
+            {% for aHero in theHeroes[0] %}
+            <div class="theHeroDiv">
+                <p>Username of your hero : <strong>{{aHero.getTheNameOfTheHero()}}</strong></p>
+                {% if aHero.sexe == 0 %}
+                    <p>The sexe of your hero is : Male</p>
+                {% else %}
+                    <p>The sexe of your hero is : Female</p>
+                {% endif %}
+                <p>Weapon : <strong>{{aHero.weapon}}</strong></p>
+                <p>Your hero is currently at this quest : {{aHero.getNumQuest()}}, and your step in this quest is : {{ aHero.numStep }} maybe your are blocked ? need help noob ?</p>
+            </div>
+            <br />
+            {% endfor %}
+        {% else %}
+            <p>C'est vide : {{theHeroes}}</p>
+        {% endif %}
+        <p>Test</p>
         <br />
-        {% endfor %}
     </p>
 
     <div class="deleteAccount">
         <form method="POST" action="/deleteAccount">
             <input name="password" type="password" required>
             <button type="submit" >Delete the account</button>
+        </form>
+    </div>
+    <br />
+    <div class="createAHero">
+        <form method="POST" action="/createAHero">
+            <label for="nameOfTheHero">Enter the name of your hero : (the name of your hero have to be unique)</label>
+            <input name="nameOfTheHero" placeholder="Pseudo" required>
+            <br />
+            <label for="weaponOfTheHero">Select the weapon of your hero : (if you want to have more weapon just by our battle pass)</label>
+            <select name="weaponOfTheHero" value="hands">
+                <option value="axe">Axe</option>
+                <option value="Sword">Sword</option>
+                <option value="stick">Stick</option>
+                <option value="hands">Hands</option>
+                <option value="nothing" disabled>So strong weapon (available in the battle pass only)</option>
+            </select>
+            <br />
+            <label for="sexeOfTheHero">Select the sexe of your hero :</label>
+            <select name="sexeOfTheHero" value="0">
+                <option value="0">Male</option>
+                <option value="1">Female</option>
+            </select><br />
+            <label for="passiveOfTheHero">Select the passive of your hero :</label>
+            <select name="passiveOfTheHero" value="nothing">
+                <option value="healt">Healt</option>
+                <option value="eat">Eat</option>
+                <option value="nothing" disabled>Nothing (Yes it's only available in the battle pass too, sorry it's not us it's EA business model)</option>
+            </select>
+            <button type="submit" >Create my hero</button>
         </form>
     </div>
 </html>
