@@ -27,17 +27,6 @@ def Login():
         global theConnectedUser #Set theConnectedUser to global to can add new hero in the /createAHero route
         theConnectedUser = User.login(request.form['username'],request.form['password']) #Initialize the user with the username and the password
         print(theConnectedUser)
-        # --------------------------------------
-        theSelectHero = theConnectedUser.selectedHero
-        print(theSelectHero.numQuest)
-        print(theSelectHero.numStep)
-        newQuestNumber = 10
-        newStepNumber = 15
-        theSelectHero.setNumStep(newStepNumber)
-        theSelectHero.setNumQuest(newQuestNumber)
-        print(theSelectHero.numQuest)
-        print(theSelectHero.numStep)
-        #--------------------------------------
         if(theConnectedUser is not None):
             if(theConnectedUser == "ErrorWithTheUsername"):
                 pageToLoad = "registerPage.html" #Set the pageToLoad var to registerPage.html because the global keyword doesn't work as expected
