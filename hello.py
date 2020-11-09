@@ -105,12 +105,6 @@ def execTheQuest():
             theSelectedHero.setNumStep(theCurrentStep.stepNumber+1)  # Call the setNumStep function to automaticly save the changement in the database
             actualise_All_Variable(theSelectedHero) #Refresh the different variable like theCurrentQuest, theCurrentStep, pathOfTheTemplateToLoad
 
-
-            print("A testttt")
-            print(theCurrentQuest.idOfTheQuest)
-            print(theCurrentStep.stepNumber)
-            print(pathOfTheTemplateToLoad)
-
             # ---------------- Useful only because we don't have implement the monster in the step object yet
             aNewMonster = Monster("Sardoche", 2, "Punch", 10, "Rage", ["Attributs 1", "Attributs 2"])
             # ----------------
