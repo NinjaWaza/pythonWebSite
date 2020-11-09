@@ -47,8 +47,15 @@ VALUES
 
 INSERT INTO quest(nameOfTheQuest)
 VALUES
-("The name of the quest");
+("The first quest"),
+("The second quest"),
+("The third quest");
 
 INSERT INTO step(textOfTheStep,questId,stepNumber)
 VALUES
-("The step text ...",1,0);
+("The step 0 of the first quest",1,0),
+("The step 1 of the first quest",1,1),
+("The step 0 of the second quest",2,0),
+("The step 1 of the second quest",2,1),
+("The step 0 of the third quest",3,0),
+("The step 1 of the third quest",3,1);

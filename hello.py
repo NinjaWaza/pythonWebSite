@@ -70,32 +70,61 @@ def execTheQuest():
     theHeroesList = theConnectedUser.getTheListOfHeroes()
     numQuest = theSelectedHero.numQuest
     numStep = theSelectedHero.numStep
+    global pathOfTheTemplateToLoad
+    global theCurrentQuest
+    global theCurrentStep
+
+    # -------- Not implemented yet
+    #global theMonster #Userful to get the monster of a specific step
+
     pathOfTheTemplateToLoad = "quests/quest"+str(numQuest)+"/step"+str(numStep)+".html"
     theCurrentQuest = theQuestBook.getAQuestById(numQuest)
     theCurrentStep = theCurrentQuest.getAStepById(numStep)
 
+    def actualise_All_Variable(theHeroWeNeedToUse):
+        global theCurrentQuest
+        global theCurrentStep
+        global pathOfTheTemplateToLoad
+        theCurrentQuest = theQuestBook.getAQuestById(theHeroWeNeedToUse.numQuest)
+        theCurrentStep = theCurrentQuest.getAStepById(theHeroWeNeedToUse.numStep)
+        pathOfTheTemplateToLoad = "quests/quest" + str(theCurrentQuest.idOfTheQuest) + "/step" + str(theCurrentStep.stepNumber) + ".html"
+
     if(request.method == 'POST'):
         theLastChoice = request.form['theUserChoice'] #Change the request.form to the choice in the form from the step.html page
-
+        #Do want we want to do with the choice of the user
 
         #Change the step of the hero
-        if(theCurrentStep == theCurrentQuest.getTheMaxStepNumberOfTheQuest()): #If the current step is the last step of a quest
+        if(theCurrentStep.stepNumber == theCurrentQuest.getTheMaxStepNumberOfTheQuest()-1): #If the current step is the last step of a quest, -1 because we start the step at 0
             #Check if it's not the last quest of the questbook ...
             if(numQuest+1 > theQuestBook.getTheMaxQuestNumber()): #That mean the hero have finish the game
                 return render_template("endGame.html")
             theSelectedHero.setNumQuest(numQuest+1) #Set the numQuest of the hero to the next step number, call the setNumQuest function to automaticly save the changement in the database
             theSelectedHero.setNumStep(0) #Call the setNumeStep function to automaticly save the changement in the database
-            #Save this update in the database ...
         else: #That mean the quest isn't finish, there are still steps
-            theSelectedHero.numStep = theCurrentStep+1 #Call the setNumeStep function to automaticly save the changement in the database
-            # Save this update in the database ...
+            print("We are going to update the stepnumber of the hero")
+            theSelectedHero.setNumStep(theCurrentStep.stepNumber+1)  # Call the setNumStep function to automaticly save the changement in the database
+            actualise_All_Variable(theSelectedHero) #Refresh the different variable like theCurrentQuest, theCurrentStep, pathOfTheTemplateToLoad
+
+
+            print("A testttt")
+            print(theCurrentQuest.idOfTheQuest)
+            print(theCurrentStep.stepNumber)
+            print(pathOfTheTemplateToLoad)
+
+            # ---------------- Useful only because we don't have implement the monster in the step object yet
+            aNewMonster = Monster("Sardoche", 2, "Punch", 10, "Rage", ["Attributs 1", "Attributs 2"])
+            # ----------------
+                                                            #Give the monster from the global var
+            infoOfTheStep = [theCurrentQuest, theCurrentStep, aNewMonster, "test"]
+            return render_template(pathOfTheTemplateToLoad, theStepVar=infoOfTheStep)
 
     else: #That mean the request.method is Get, we have to send the template of the specific quest and the specific step
-
         if (numQuest == theQuestBook.getTheMaxQuestNumber()):  # That mean the hero have finish the game
             return render_template("endGame.html")
 
+        # ---------------- Useful only because we don't have implement the monster in the step object yet
         aNewMonster = Monster("Trump",1,"Golf club", 5 ,"Contests the votes",["Attributs 1","Attributs 2"])
+        # ----------------
 
         infoOfTheStep = [theCurrentQuest,theCurrentStep,aNewMonster,"test"]
         return render_template(pathOfTheTemplateToLoad, theStepVar=infoOfTheStep)
@@ -288,6 +317,7 @@ class Hero(Entity):
         myDatabaseAccess.execute("UPDATE hero SET numQuest = ? WHERE hero.nameOfTheHero = ? ",infosQuest)
         resultatOfTheUpdateRequest=myDatabaseAccess.commit() # Save the change in the database.db file
         if (resultatOfTheUpdateRequest is None):  # Check if the result of the SQL request is to none
+            self.numQuest = newQuestNumber #Change the numQuest of the current java object
             return True  # Return True, that mean the update is a success
         return False
 
@@ -297,6 +327,7 @@ class Hero(Entity):
         myDatabaseAccess.execute("UPDATE hero SET numStep = ? WHERE hero.nameOfTheHero = ? ",infosQuest)
         resultatOfTheUpdateRequest = myDatabaseAccess.commit()  # Save the change in the database.db file
         if (resultatOfTheUpdateRequest is None):  # Check if the result of the SQL request is to none
+            self.numStep = newStepNumber #Change the numStep of the current java object
             return True  # Return True, that mean the update is a success
         return False
 
