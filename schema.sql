@@ -30,7 +30,6 @@ CREATE TABLE quest (
 );
 
 CREATE TABLE step (
-  stepId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   stepNumber INT NOT NULL,
   textOfTheStep TEXT DEFAULT "Text of the step isn't set yet",
   questId INT,

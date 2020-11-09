@@ -53,13 +53,27 @@ def Login():
         
     else: #That mean the request.method is egal to GET
         if(session.get("username") is not None): #Check if the user is already connect or not
-            if(theConnectedUser.id is not None):
-                theHeroesList = theConnectedUser.getTheListOfHeroes()
-                pageToLoad = "gamePage.html" #Set the pageToLoad variable to gamePage.html
-                return render_template(pageToLoad, theHeroes=[theHeroesList])
+            if(theConnectedUser is User):
+                print("Une var")
+            else:
+                print("Pas de var")
+            if(theConnectedUser is not None):
+                if(theConnectedUser.id is not None):
+                    theHeroesList = theConnectedUser.getTheListOfHeroes()
+                    pageToLoad = "gamePage.html" #Set the pageToLoad variable to gamePage.html
+                    return render_template(pageToLoad, theHeroes=[theHeroesList])
         else:
             pageToLoad = 'loginPage.html' #Set the pageToLoad variable to loginPage.html        
     return render_template(pageToLoad) #Rendering the template with the variable pageToLoad
+
+@app.route('/getQuest', methods=["GET", "POST"]) #Route for the quest
+def execTheQuest():
+    """The execTheQuest function will render the template of the current quest of the current hero"""
+    if(request.method == 'POST'):
+        theLastChoice = request.form['theChoice'] #Change the request form to the choice in the form from the step.html page
+        getTheHero = 0 #Set it with the selected user
+    else: #That mean the request method if Get
+        ...
 
 def createTheQuestBook():
     return QuestBook() #Initiliaze the quest book
@@ -86,11 +100,10 @@ def logout():
 @app.route('/createAHero', methods=["GET", "POST"]) #Route for create a new hero
 def createAHero():
     """The createAHero function will create a hero and add it to the database and then redirect to the main route."""
-    idOfTheConnectedUser = session["idOfTheConnectedUser"]
     if(request.method == 'POST'):
         #We have to check if the hero name doesn't already exist in the database
         
-        theNewHero = Hero.createATotallyNewHero(idOfTheConnectedUser) #Create the hero and add it directly in the database
+        theNewHero = Hero.createATotallyNewHero(theConnectedUser.id) #Create the hero and add it directly in the database
         if(theNewHero is not None): #If the Hero.createATotallyNewHero() returning a hero
             theConnectedUser.addAHero(theNewHero)
         #theNewHero = Hero(request.form['nameOfTheHero'],0,request.form['weaponOfTheHero'],10,request.form['passiveOfTheHero'],request.form['sexeOfTheHero'],theConnectedUser.id)
@@ -187,7 +200,10 @@ class User:
         self.id = id #Set the id of the User object
         self.username = username #Set the usename of the User object
         self.listOfHero = list() #Initialize the list as empty
+        self.selectedHero = None
         self.setTheListOfHeroFromTheDatabase() #Call the function to get the database of the current hero from the database
+        if(self.listOfHero is not None):
+            self.selectedHero = self.listOfHero[0] #Set the selected hero to a default value (the first hero of the listOfHero), will be userful because we can't save the selected hero in the session variable
     
     def addAHero(self,theHeroToAdd):
         self.listOfHero.append(theHeroToAdd)
@@ -316,7 +332,7 @@ class Quest:
 
     def initilaliseTheStepsFromTheDatabase(self):
         myDatabaseAccess = get_db() #Get the database in a variable
-        resultatOfTheRequest = myDatabaseAccess.execute("SELECT stepId,textOfTheStep,step.questId FROM step INNER JOIN quest ON step.questId = quest.questId WHERE step.questId = '%s'" % self.idOfTheQuest) #Get the the list of step from the database for a specifique quest
+        resultatOfTheRequest = myDatabaseAccess.execute("SELECT stepNumber,textOfTheStep,step.questId FROM step INNER JOIN quest ON step.questId = quest.questId WHERE step.questId = '%s'" % self.idOfTheQuest) #Get the the list of step from the database for a specifique quest
         if(resultatOfTheRequest is not None):
             for resultRow in resultatOfTheRequest:
                 aStepToAdd = Step(resultRow[0],resultRow[1],resultRow[2]) #Create the intance of the step
