@@ -9,57 +9,57 @@ import sqlite3,bcrypt,click
 #g : useful to access to the database and get it easily in a python variable
 #session : useful to create session, add some values in this one, re use the value on different page ...
 #redirect : useful to change the current route, and reload the page
-from flask import Flask, request, render_template, current_app, g, session, redirect
+#from flask import Flask, request, render_template, current_app, g, session, redirect
 #with_appcontext : useful to load the shcemma.sql file
 from flask.cli import with_appcontext
 
-app = Flask(__name__)
+#app = Flask(__name__)
 
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+#app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
-@app.route('/', methods=["GET", "POST"]) #Route for the login/register/game page
-def Login():
-    """The login function will try to connect the user, if the username doesn't exist in the database, that will redirect the user to the registerPage.html."""
-    theQuestBook = createTheQuestBook() #Initialize the questBook var with the createTheQuestBook function (that will get the info directly from the database)
-    pageToLoad = "loginPage.html" #Default value of the pageToLoad
-    if(request.method == 'POST'):
-        global theConnectedUser #Set theConnectedUser to global to can add new hero in the /createAHero route
-        theConnectedUser = User.login(request.form['username'],request.form['password']) #Initialize the user with the username and the password
-        print(theConnectedUser)
-        if(theConnectedUser is not None):
-            if(theConnectedUser == "ErrorWithTheUsername"):
-                pageToLoad = "registerPage.html" #Set the pageToLoad var to registerPage.html because the global keyword doesn't work as expected
-                return render_template(pageToLoad)
-            else:
-                if(theConnectedUser == "ErrorWithThePassword"):
-                    pageToLoad = "loginPage.html" #Set the pageToLoad var to loginPage.html because the global keyword doesn't work as expected
-                    return render_template(pageToLoad)
-                else:
-                    session["username"] = theConnectedUser.getUserUsername()
-                    session["idOfTheConnectedUser"] = theConnectedUser.id
-                    pageToLoad = session["pageToLoad"] #Refresh the pageToLoad variable with the session pageToLoad var
-                    theQuestBook = createTheQuestBook() #Initialise the quest book
-            
-                    theHeroesList = theConnectedUser.getTheListOfHeroes()
-                    pageToLoad = "gamePage.html" #Set the pageToLoad variable to gamePage.html
-                    return render_template(pageToLoad, theHeroes=[theHeroesList])
-
-        #Only for Logs/Debug               ---------------------
-        print("All the quest of the quest book")
-        for aQuest in theQuestBook.getAllQuests():
-            print("Quest id : "+ str(aQuest.idOfTheQuest))
-            print(aQuest.toString())
-        #End of the "for Logs/Debug" block ---------------------
-        
-    else: #That mean the request.method is egal to GET
-        if(session.get("username") is not None): #Check if the user is already connect or not
-            if(theConnectedUser.id is not None):
-                theHeroesList = theConnectedUser.getTheListOfHeroes()
-                pageToLoad = "gamePage.html" #Set the pageToLoad variable to gamePage.html
-                return render_template(pageToLoad, theHeroes=[theHeroesList])
-        else:
-            pageToLoad = 'loginPage.html' #Set the pageToLoad variable to loginPage.html        
-    return render_template(pageToLoad) #Rendering the template with the variable pageToLoad
+# @app.route('/', methods=["GET", "POST"]) #Route for the login/register/game page
+# def Login():
+#     """The login function will try to connect the user, if the username doesn't exist in the database, that will redirect the user to the registerPage.html."""
+#     theQuestBook = createTheQuestBook() #Initialize the questBook var with the createTheQuestBook function (that will get the info directly from the database)
+#     pageToLoad = "loginPage.html" #Default value of the pageToLoad
+#     if(request.method == 'POST'):
+#         global theConnectedUser #Set theConnectedUser to global to can add new hero in the /createAHero route
+#         theConnectedUser = User.login(request.form['username'],request.form['password']) #Initialize the user with the username and the password
+#         print(theConnectedUser)
+#         if(theConnectedUser is not None):
+#             if(theConnectedUser == "ErrorWithTheUsername"):
+#                 pageToLoad = "registerPage.html" #Set the pageToLoad var to registerPage.html because the global keyword doesn't work as expected
+#                 return render_template(pageToLoad)
+#             else:
+#                 if(theConnectedUser == "ErrorWithThePassword"):
+#                     pageToLoad = "loginPage.html" #Set the pageToLoad var to loginPage.html because the global keyword doesn't work as expected
+#                     return render_template(pageToLoad)
+#                 else:
+#                     session["username"] = theConnectedUser.getUserUsername()
+#                     session["idOfTheConnectedUser"] = theConnectedUser.id
+#                     pageToLoad = session["pageToLoad"] #Refresh the pageToLoad variable with the session pageToLoad var
+#                     theQuestBook = createTheQuestBook() #Initialise the quest book
+#
+#                     theHeroesList = theConnectedUser.getTheListOfHeroes()
+#                     pageToLoad = "gamePage.html" #Set the pageToLoad variable to gamePage.html
+#                     return render_template(pageToLoad, theHeroes=[theHeroesList])
+#
+#         #Only for Logs/Debug               ---------------------
+#         print("All the quest of the quest book")
+#         for aQuest in theQuestBook.getAllQuests():
+#             print("Quest id : "+ str(aQuest.idOfTheQuest))
+#             print(aQuest.toString())
+#         #End of the "for Logs/Debug" block ---------------------
+#
+#     else: #That mean the request.method is egal to GET
+#         if(session.get("username") is not None): #Check if the user is already connect or not
+#             if(theConnectedUser.id is not None):
+#                 theHeroesList = theConnectedUser.getTheListOfHeroes()
+#                 pageToLoad = "gamePage.html" #Set the pageToLoad variable to gamePage.html
+#                 return render_template(pageToLoad, theHeroes=[theHeroesList])
+#         else:
+#             pageToLoad = 'loginPage.html' #Set the pageToLoad variable to loginPage.html
+#     return render_template(pageToLoad) #Rendering the template with the variable pageToLoad
 
 # def createTheQuestBook():
 #     return QuestBook() #Initiliaze the quest book
@@ -76,12 +76,12 @@ def deleteAccount():
             print(f"The user {session['username']} have been deleted") #Just for having some log in the console (and for debug)
     return redirect("/logout") #Redirect to the logout function
 
-@app.route('/logout') #Route for the logout
-def logout():
-    """The logout function will destruct everything in the session and then redirect to the main route."""
-    for value in session.copy():
-        session.pop(value, None) #Destruct all values in the session
-    return redirect("/") #Redirect to the main route
+# @app.route('/logout') #Route for the logout
+# def logout():
+#     """The logout function will destruct everything in the session and then redirect to the main route."""
+#     for value in session.copy():
+#         session.pop(value, None) #Destruct all values in the session
+#     return redirect("/") #Redirect to the main route
 
 @app.route('/createAHero', methods=["GET", "POST"]) #Route for create a new hero
 def createAHero():
@@ -99,19 +99,19 @@ def createAHero():
     else:
         return redirect("/") #Redirect to the main route #Because that mean we are with the Get method and it's impossible cause we are creating a hero
 
-@app.route('/registerPage', methods=["GET", "POST"]) #Route for the register page
-def registerAUser():
-    print("We in registerAUser function")
-    #If it's with POST method that will call the createAnAccount Function
-    if(request.method == 'POST'):
-        myDatabaseAccess = get_db() #Get the database access in the variable myDatabaseAccess
-        infosUser = [request.form['username'],hashAPassword(request.form['password'])] #Initialise the infosUser var, we are going to give to the execute function to insert the user in the table
-        resultatRequest = myDatabaseAccess.execute("INSERT INTO user(username,password) VALUES(?,?)", infosUser)
-        myDatabaseAccess.commit() #Save the change in the database.db file
-        session["username"] = infosUser[0] #Save in the session variable the username of the user
-        return redirect("/")
-    else: #Else if it's with GET method that will call the render_template function to load the registerPage.html template
-        return render_template('registerPage.html') #If we are here that mean the request.method is GET
+# @app.route('/registerPage', methods=["GET", "POST"]) #Route for the register page
+# def registerAUser():
+#     print("We in registerAUser function")
+#     #If it's with POST method that will call the createAnAccount Function
+#     if(request.method == 'POST'):
+#         myDatabaseAccess = get_db() #Get the database access in the variable myDatabaseAccess
+#         infosUser = [request.form['username'],hashAPassword(request.form['password'])] #Initialise the infosUser var, we are going to give to the execute function to insert the user in the table
+#         resultatRequest = myDatabaseAccess.execute("INSERT INTO user(username,password) VALUES(?,?)", infosUser)
+#         myDatabaseAccess.commit() #Save the change in the database.db file
+#         session["username"] = infosUser[0] #Save in the session variable the username of the user
+#         return redirect("/")
+#     else: #Else if it's with GET method that will call the render_template function to load the registerPage.html template
+#         return render_template('registerPage.html') #If we are here that mean the request.method is GET
 
 # #Database access : access to the database store in database.db
 # def get_db():

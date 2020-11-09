@@ -1,14 +1,18 @@
+import pprint
+
 from flask import Flask
 #from flask.json import dump
 
-#from src.User import User
-#from src.QuestBook import QuestStep, Quest, QuestBook
-
+""" Flask app global instance """
 app = Flask(__name__)
 
+""" pprint global instance """
+pp = pprint.PrettyPrinter(indent=4)
 
-# user = User("eymeric", 1)
-#
+""" User global instance """
+user = None
+
+
 # step00 = QuestStep(
 #     0,
 #     "Bonjour, de quelle sexe est tu ?</br>- homme plus de vie</br>- femme joue en premier",
