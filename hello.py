@@ -20,12 +20,24 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 @app.route('/', methods=["GET", "POST"]) #Route for the login/register/game page
 def Login():
     """The login function will try to connect the user, if the username doesn't exist in the database, that will redirect the user to the registerPage.html."""
+    global theQuestBook #Set theQuestBook to global to can add use the variable in the getQuest route
     theQuestBook = createTheQuestBook() #Initialize the questBook var with the createTheQuestBook function (that will get the info directly from the database)
     pageToLoad = "loginPage.html" #Default value of the pageToLoad
     if(request.method == 'POST'):
         global theConnectedUser #Set theConnectedUser to global to can add new hero in the /createAHero route
         theConnectedUser = User.login(request.form['username'],request.form['password']) #Initialize the user with the username and the password
         print(theConnectedUser)
+        # --------------------------------------
+        theSelectHero = theConnectedUser.selectedHero
+        print(theSelectHero.numQuest)
+        print(theSelectHero.numStep)
+        newQuestNumber = 10
+        newStepNumber = 15
+        theSelectHero.setNumStep(newStepNumber)
+        theSelectHero.setNumQuest(newQuestNumber)
+        print(theSelectHero.numQuest)
+        print(theSelectHero.numStep)
+        #--------------------------------------
         if(theConnectedUser is not None):
             if(theConnectedUser == "ErrorWithTheUsername"):
                 pageToLoad = "registerPage.html" #Set the pageToLoad var to registerPage.html because the global keyword doesn't work as expected
@@ -53,10 +65,6 @@ def Login():
         
     else: #That mean the request.method is egal to GET
         if(session.get("username") is not None): #Check if the user is already connect or not
-            if(theConnectedUser is User):
-                print("Une var")
-            else:
-                print("Pas de var")
             if(theConnectedUser is not None):
                 if(theConnectedUser.id is not None):
                     theHeroesList = theConnectedUser.getTheListOfHeroes()
@@ -69,11 +77,42 @@ def Login():
 @app.route('/getQuest', methods=["GET", "POST"]) #Route for the quest
 def execTheQuest():
     """The execTheQuest function will render the template of the current quest of the current hero"""
+    theSelectedHero = theConnectedUser.selectedHero  # Set it with the selected user
+    theHeroesList = theConnectedUser.getTheListOfHeroes()
+    numQuest = theSelectedHero.numQuest
+    numStep = theSelectedHero.numStep
+    pathOfTheTemplateToLoad = "quests/quest"+str(numQuest)+"/step"+str(numStep)+".html"
+    theCurrentQuest = theQuestBook.getAQuestById(numQuest)
+    theCurrentStep = theCurrentQuest.getAStepById(numStep)
+
     if(request.method == 'POST'):
-        theLastChoice = request.form['theChoice'] #Change the request form to the choice in the form from the step.html page
-        getTheHero = 0 #Set it with the selected user
-    else: #That mean the request method if Get
-        ...
+        theLastChoice = request.form['theUserChoice'] #Change the request.form to the choice in the form from the step.html page
+
+
+        #Change the step of the hero
+        if(theCurrentStep == theCurrentQuest.getTheMaxStepNumberOfTheQuest()): #If the current step is the last step of a quest
+            #Check if it's not the last quest of the questbook ...
+            if(numQuest+1 > theQuestBook.getTheMaxQuestNumber()): #That mean the hero have finish the game
+                return render_template("endGame.html")
+            theSelectedHero.setNumQuest(numQuest+1) #Set the numQuest of the hero to the next step number, call the setNumQuest function to automaticly save the changement in the database
+            theSelectedHero.setNumStep(0) #Call the setNumeStep function to automaticly save the changement in the database
+            #Save this update in the database ...
+        else: #That mean the quest isn't finish, there are still steps
+            theSelectedHero.numStep = theCurrentStep+1 #Call the setNumeStep function to automaticly save the changement in the database
+            # Save this update in the database ...
+
+    else: #That mean the request.method is Get, we have to send the template of the specific quest and the specific step
+
+        if (numQuest == theQuestBook.getTheMaxQuestNumber()):  # That mean the hero have finish the game
+            return render_template("endGame.html")
+
+        aNewMonster = Monster("Trump",1,"Golf club", 5 ,"Contests the votes",["Attributs 1","Attributs 2"])
+
+        infoOfTheStep = [theCurrentQuest,theCurrentStep,aNewMonster,"test"]
+        return render_template(pathOfTheTemplateToLoad, theStepVar=infoOfTheStep)
+
+    pageToLoad = "gamePage.html"  # Set the pageToLoad var to gamePage.html
+    return render_template(pageToLoad, theHeroes=[theHeroesList])
 
 def createTheQuestBook():
     return QuestBook() #Initiliaze the quest book
@@ -221,7 +260,7 @@ class User:
         resultatOfTheRequest = myDatabaseAccess.execute("SELECT nameOfTheHero, lvl, weapon, armor, passive, sexe, numQuest, numStep FROM hero INNER JOIN user ON hero.idUser = user.idUser WHERE username = '%s'" % self.username) #Get the the list of hero from the database
         if(resultatOfTheRequest is not None):
             for resultRow in resultatOfTheRequest:
-                aHero = Hero(resultRow[0],resultRow[1],resultRow[2],resultRow[3],resultRow[4],resultRow[5],resultRow[6],resultRow[7]) #Create the intance of the hero
+                aHero = Hero(resultRow[0],resultRow[1],resultRow[2],resultRow[3],resultRow[4],resultRow[5],self.id,resultRow[6],resultRow[7]) #Create the intance of the hero
                 self.addAHero(aHero) #Add the hero to the list of hero of the user
 
     def getTheListOfHeroes(self):
@@ -238,7 +277,7 @@ class Entity:
 
 #Class Hero (extend from Entity)
 class Hero(Entity):
-    def __init__(self,name,lvl,weapon,armor,passive,sexe,idOfTheUser,numQuest = 0,numStep = 0):
+    def __init__(self,name,lvl,weapon,armor,passive,sexe,idOfTheUser,numQuest = 1,numStep = 0):
         Entity.__init__(self,name,lvl,weapon,armor,passive)
         self.sexe = sexe
         self.numQuest = numQuest
@@ -253,6 +292,24 @@ class Hero(Entity):
     
     def getNumQuest(self):
         return self.numQuest
+
+    def setNumQuest(self, newQuestNumber):
+        myDatabaseAccess = get_db()  # Get the database in a variable
+        infosQuest = [newQuestNumber, self.name]
+        myDatabaseAccess.execute("UPDATE hero SET numQuest = ? WHERE hero.nameOfTheHero = ? ",infosQuest)
+        resultatOfTheUpdateRequest=myDatabaseAccess.commit() # Save the change in the database.db file
+        if (resultatOfTheUpdateRequest is None):  # Check if the result of the SQL request is to none
+            return True  # Return True, that mean the update is a success
+        return False
+
+    def setNumStep(self, newStepNumber):
+        myDatabaseAccess = get_db()  # Get the database in a variable
+        infosQuest = [newStepNumber, self.name]
+        myDatabaseAccess.execute("UPDATE hero SET numStep = ? WHERE hero.nameOfTheHero = ? ",infosQuest)
+        resultatOfTheUpdateRequest = myDatabaseAccess.commit()  # Save the change in the database.db file
+        if (resultatOfTheUpdateRequest is None):  # Check if the result of the SQL request is to none
+            return True  # Return True, that mean the update is a success
+        return False
 
     @staticmethod
     def createATotallyNewHero(idOfTheConnectedUser):
@@ -272,7 +329,7 @@ class Hero(Entity):
 #Class Monster (extend from Entity)
 class Monster(Entity):
     def __init__(self,name,lvl,weapon,armor,passive,someAttributs):
-        Hero.init(name,lvl,weapon,armor,passive)
+        Entity.__init__(self,name,lvl,weapon,armor,passive)
         self.someAttributs = someAttributs
 
 #Class QuestBook (contain some quests)
@@ -297,6 +354,14 @@ class QuestBook:
     
     def getAllQuests(self):
         return self.quests
+
+    def getTheMaxQuestNumber(self):
+        return len(self.quests)
+
+    def getAQuestById(self, theIdOfTheQuest): #Return a specific quest identified by his id
+        for aQuest in self.quests:
+            if(aQuest.idOfTheQuest == theIdOfTheQuest):
+                return aQuest
 
     def initilaliseTheQuestsFromTheDatabase(self):
         myDatabaseAccess = get_db() #Get the database in a variable
@@ -341,6 +406,14 @@ class Quest:
 
     def addStep(self,aStepToAdd):
         self.steps.append(aStepToAdd) #That will add the step to the end of the list
+
+    def getAStepById(self, theStepNumber):
+        for aStep in self.steps:
+            if(aStep.stepNumber == theStepNumber):
+                return aStep
+
+    def getTheMaxStepNumberOfTheQuest(self):
+        return len(self.steps)
 
     def toString(self): #Print all the steps of a quest | Use only for debug during development
         """This function is here for the Log/Debug"""

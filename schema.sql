@@ -19,7 +19,7 @@ CREATE TABLE hero (
   passive TEXT,
   sexe BOOLEAN DEFAULT 0,
   idUser INT,
-  numQuest INT DEFAULT 0,
+  numQuest INT DEFAULT 1,
   numStep INT DEFAULT 0,
   FOREIGN KEY (idUser) REFERENCES user(idUser)
 );
