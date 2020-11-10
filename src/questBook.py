@@ -13,13 +13,18 @@ class QuestBook:
         return self.m_quests
 
     def set_quests(self, _value):
-        self.m_quests = _value
+        pass
 
     quests = property(get_quests, set_quests)
 
     # ##############
     # ## METHODS
     # ##############
+
+    def get_quest_by_id(self, id_of_the_quest):
+        for quest in self.quests:
+            if(quest.id == id_of_the_quest):
+                return quest
 
     def add_quest(self, _value):
         self.m_quests.append(_value)

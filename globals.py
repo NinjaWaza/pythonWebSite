@@ -3,6 +3,8 @@ import pprint
 from flask import Flask
 #from flask.json import dump
 
+from src.questBook import QuestBook
+
 """ Flask app global instance """
 app = Flask(__name__)
 
@@ -11,6 +13,8 @@ pp = pprint.PrettyPrinter(indent=4)
 
 """ User global instance """
 user = None
+
+questbook = QuestBook()
 
 
 # step00 = QuestStep(

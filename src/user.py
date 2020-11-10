@@ -10,6 +10,9 @@ class User:
         self.m_name = _name
         self.m_sex = None
         self.m_heroes = list()
+        self.m_selected_hero = None
+
+    #Getters
 
     def get_id(self):
         return self.m_id
@@ -23,8 +26,15 @@ class User:
     def get_heroes(self):
         if self.m_heroes is None  or len(self.m_heroes) <= 0:
             self.init_heroes()
+            if(len(self.m_heroes) >= 1):
+                self.m_selectedHero = self.heroes[0] #Set the selectedHero to the first of the list
 
         return self.m_heroes
+
+    def get_selected_hero(self):
+        return self.m_selectedHero
+
+    #Setters
 
     def set_id(self):
         pass
@@ -38,10 +48,16 @@ class User:
     def set_heroes(self, _value):
         pass
 
+    def set_selected_hero(self, _value):
+        self.m_selectedHero = _value
+
+    #Properties
+
     id = property(get_id, set_id)
     name = property(get_name, set_name)
     sex = property(get_sex, set_sex)
     heroes = property(get_heroes, set_heroes)
+    selected_hero = property(get_selected_hero,set_selected_hero)
 
     # ##############
     # ## METHODS
@@ -66,6 +82,7 @@ class User:
                     row[2],   # weapon
                     row[3],   # armor
                     row[4],   # passive
+                    self.id,  # user_id
                     row[5],   # sex
                     row[6],   # numQuest
                     row[7]    # numStep

@@ -7,6 +7,8 @@ class Step:
         self.m_number = _number
         self.m_text = _text if _text else None
 
+    #Getters
+
     def get_quest_id(self):
         return self.m_quest_id
 
@@ -19,6 +21,8 @@ class Step:
 
         return self.m_text
 
+    #Setters
+
     def set_quest_id(self, _value):
         pass
 
@@ -27,6 +31,8 @@ class Step:
 
     def set_text(self, _value):
         self.m_text = _value
+
+    #Properties
 
     quest_id = property(get_quest_id, set_quest_id)
     number = property(get_number, set_number)
