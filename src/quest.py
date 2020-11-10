@@ -40,7 +40,7 @@ class Quest:
 
     id = property(get_id, set_id)
     name = property(get_name, set_name)
-    step = property(get_steps, set_steps())
+    step = property(get_steps, set_steps)
 
     # ##############
     # ## METHODS
