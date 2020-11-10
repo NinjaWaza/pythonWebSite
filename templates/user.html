@@ -18,30 +18,28 @@
     <p>
         Hello : {{ user.name }}
         <br />
-        {% if theHeroes != None %}
-            <p>On est dedans 1 </p>
-            {% for aHero in theHeroes %}
+        {% if the_heroes %}
+            {% for hero in the_heroes %}
             <div class="theHeroDiv">
-                <p>Username of your hero : <strong>{{aHero.name}}</strong></p>
-                {% if aHero.sexe == 0 %}
+                <p>Username of your hero : <strong>{{hero.name}}</strong></p>
+                {% if hero.sex == 0 %}
                     <p>The sexe of your hero is : Male</p>
                 {% else %}
                     <p>The sexe of your hero is : Female</p>
                 {% endif %}
-                <p>Weapon : <strong>{{aHero.weapon}}</strong></p>
-                <p>Your hero is currently at this quest : {{aHero.getNumQuest()}}, and your step in this quest is : {{ aHero.numStep }} maybe your are blocked ? need help noob ?</p>
+                <p>Weapon : <strong>{{hero.weapon}}</strong></p>
+                <p>Your hero is currently at this quest : {{hero.current_quest}}, and your step in this quest is : {{ hero.current_step }} maybe your are blocked ? need help noob ?</p>
             </div>
             <br />
             {% endfor %}
         {% else %}
-            <p>C'est vide : {{theHeroes}}</p>
+            <p>the_heroes var is empty, create a first please !</p>
         {% endif %}
-        <p>Test</p>
         <br />
     </p>
 
     <div class="continueTheQuest">
-        <form method="GET" action="/getQuest">
+        <form method="GET" action="/continueQuest">
             <button type="submit" >Go to the quest</button>
         </form>
     </div>

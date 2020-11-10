@@ -8,6 +8,8 @@ class Quest:
         self.m_name = _name if _name else None
         self.m_steps = list()
 
+    #Getters
+
     def get_id(self):
         return self.m_id
 
@@ -23,6 +25,8 @@ class Quest:
 
         return self.m_steps
 
+    #Setters
+
     def set_id(self, _value):
         pass
 
@@ -30,15 +34,22 @@ class Quest:
         self.m_name = _value
 
     def set_steps(self, _value):
-        self.m_steps = _value
+        pass
+
+    #Properties
 
     id = property(get_id, set_id)
     name = property(get_name, set_name)
-    steps = property(get_steps, set_steps)
+    step = property(get_steps, set_steps)
 
     # ##############
     # ## METHODS
     # ##############
+
+    def get_a_step_by_number(self, number_of_the_step):
+        for step in self.m_steps:
+            if(step.number == number_of_the_step):
+                return step
 
     def get_last_step_id(self):
         return len(self.m_steps) - 1

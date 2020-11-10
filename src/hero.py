@@ -2,14 +2,47 @@ from src.entity import Entity
 
 
 class Hero(Entity):
-    def __init__(self,  _name, _lvl, _weapon, _armor, _passive, _user_id=None, _quest_id=None, _step_num=None):
-        Entity(_name, _lvl, _weapon, _armor, _passive)
+    def __init__(self,  _name, _lvl, _weapon, _armor, _passive, _user_id=None, _sex=None, _quest_id=None, _step_num=None):
+        Entity.__init__(self,_name, _lvl, _weapon, _armor, _passive)
         self.m_user_id = _user_id
-        self.m_sex = None
+        self.m_sex = _sex
         self.m_current_quest = _quest_id if _quest_id else None
         self.m_current_step = _step_num if _step_num else None
 
-    # TODO : getter / setter
+    #Getter
+
+    def get_user_id(self):
+        return self.m_user_id
+
+    def get_sex(self):
+        return self.m_sex
+
+    def get_current_quest(self):
+        return self.m_current_quest
+
+    def get_current_step(self):
+        return self.m_current_step
+
+    #Setter
+
+    def set_user_id(self, value):
+         self, value.m_user_id = value
+
+    def set_sex(self, value):
+         self, value.m_sex = value
+
+    def set_current_quest(self, value):
+         self, value.m_current_quest = value
+
+    def set_current_step(self, value):
+         self, value.m_current_step = value
+
+    #Properties
+
+    user_id = property(get_user_id,set_user_id)
+    sex = property(get_sex, set_sex)
+    current_quest = property(get_current_quest, set_current_quest)
+    current_step = property(get_current_step, set_current_step)
 
     # TODO
     # def getNumQuest(self):

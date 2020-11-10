@@ -1,5 +1,6 @@
 import pprint
 from src.user import User
+from src.monster import Monster
 
 import globals
 from flask import Flask, render_template, request, redirect, url_for
@@ -109,9 +110,8 @@ def user_page():
     return render_template(
         'user.html',
         user=globals.user,
-        theHeroes=globals.user.get_heroes()
+        the_heroes=globals.user.get_heroes()
     )
-
 
 @globals.app.route('/game', methods=['POST', 'GET'])
 def game_page():
