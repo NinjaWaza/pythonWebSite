@@ -22,9 +22,10 @@ class Hero(Entity):
     # TODO : load_to load_from
 
     # TODO
-    # def toString(self):
-    #     return "Je m'appelle : " + self.name + " Je suis niveau : " + str(            self.lvl) + " Je suis équipé avec : " + self.weapon + " J'ai : " + str(self.armor) + " d'armure"
-    #
+
+    def toString(self):
+        return "Je m'appelle : " + self.m_name + " Je suis niveau : " + str(self.m_lvl) + " Je suis équipé avec : " + self.m_weapon + " J'ai : " + str(self.m_armor) + " d'armure"
+
 
     # ##############
     # ## STATICS

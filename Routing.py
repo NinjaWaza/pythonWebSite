@@ -109,7 +109,7 @@ def user_page():
     return render_template(
         'user.html',
         user=globals.user,
-        theHeroes=[]
+        theHeroes=globals.user.get_heroes()
     )
 
 

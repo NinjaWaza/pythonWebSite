@@ -9,6 +9,32 @@ class Entity:
 
     # TODO : getter / setter
 
+    #Getter
+
+    def get_name(self):
+        return self.m_name
+
+    def get_name(self):
+        return self.m_name
+
+    def get_name(self):
+        return self.m_name
+
+    def get_name(self):
+        return self.m_name
+
+    def get_name(self):
+        return self.m_name
+    #Setter
+    def set_name(self, value):
+        self.m_name = value
+
+
+    def set_name(self, value):
+        self.m_name = value
+
+    name = property(get_name,set_name)
+
     # ##############
     # ## METHODS
     # ##############

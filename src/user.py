@@ -21,7 +21,7 @@ class User:
         return self.m_sex
 
     def get_heroes(self):
-        if self.m_heroes is None:
+        if self.m_heroes is None  or len(self.m_heroes) <= 0:
             self.init_heroes()
 
         return self.m_heroes

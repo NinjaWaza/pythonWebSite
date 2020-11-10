@@ -18,10 +18,11 @@
     <p>
         Hello : {{ user.name }}
         <br />
-        {% if theHeroes !="" %}
-            {% for aHero in theHeroes[0] %}
+        {% if theHeroes != None %}
+            <p>On est dedans 1 </p>
+            {% for aHero in theHeroes %}
             <div class="theHeroDiv">
-                <p>Username of your hero : <strong>{{aHero.getTheNameOfTheHero()}}</strong></p>
+                <p>Username of your hero : <strong>{{aHero.name}}</strong></p>
                 {% if aHero.sexe == 0 %}
                     <p>The sexe of your hero is : Male</p>
                 {% else %}
@@ -38,6 +39,12 @@
         <p>Test</p>
         <br />
     </p>
+
+    <div class="continueTheQuest">
+        <form method="GET" action="/getQuest">
+            <button type="submit" >Go to the quest</button>
+        </form>
+    </div>
 
     <div class="deleteAccount">
         <form method="POST" action="/deleteAccount">
