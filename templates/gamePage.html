@@ -1,4 +1,4 @@
-<html>
+<html xmlns="http://www.w3.org/1999/html">
     <style>
         .theHeroDiv{
             color:rgb(68, 68, 68);
@@ -35,6 +35,23 @@
         <p>Test</p>
         <br />
     </p>
+
+    {% if theHeroes !="" %}
+
+            <div class="deleteHero">
+            <form method="POST" action="/deleteAHero">
+                <select name="HeroToDelete">
+                    {% for Hero in theHeroes[0] %}
+                        <option value="{{Hero.getTheNameOfTheHero()}}">{{Hero.getTheNameOfTheHero()}}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Delete Hero</button>
+            </form>
+            </div>
+
+    {% else %}
+            <p>C'est vide : {{theHeroes}}</p>
+        {% endif %}
 
     <div class="deleteAccount">
         <form method="POST" action="/deleteAccount">

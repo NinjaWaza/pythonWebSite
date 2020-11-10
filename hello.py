@@ -99,6 +99,20 @@ def createAHero():
     else:
         return redirect("/") #Redirect to the main route #Because that mean we are with the Get method and it's impossible cause we are creating a hero
 
+@app.route('/deleteAHero', methods=["POST"])
+def deleteAHero():
+    """deleteAHero will delete an existing hero and remove it from the database before redirecting to the main route"""
+    MyDatabaseAccess = get_db()
+    HeroToDelete = request.form['HeroToDelete'] #HeroToDelete = the hero selected by the user
+    resultatDelete = MyDatabaseAccess.execute("DELETE FROM 'hero' WHERE nameOfTheHero = '%s'" % HeroToDelete) #SQL command to delete the Hero
+    resultatDelete = MyDatabaseAccess.commit()
+    pageToLoad = "gamePage.html"  # Set the pageToLoad variable to gamePage.html
+    theHeroesList = theConnectedUser.getTheListOfHeroes()
+    for i in theHeroesList:
+        if i.__eq__(HeroToDelete):  #i search for the Hero in the list
+            print(f"The hero {HeroToDelete} has been deleted")  # Just for having some log in the console (and for debug)
+            theHeroesList.remove(i) #remove the Hero from the list
+    return render_template(pageToLoad, theHeroes=[theHeroesList])
 @app.route('/registerPage', methods=["GET", "POST"]) #Route for the register page
 def registerAUser():
     print("We in registerAUser function")
