@@ -15,4 +15,5 @@ export FLASK_ENV=developement
 
 Lancer l'app :
 ```flask run
+flask run
 ```
