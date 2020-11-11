@@ -202,7 +202,7 @@ def game_compute():
             user_choice = request.form['userChoice']
             # execute la fonction lié au step de la quete
             log = eval('globals.quest' + str(globals.user.quest["id"]) + 'step' + str(globals.user.quest["step"]))(user_choice)
-
+            
     #quest2step2_diplay
     # step_display
     # step_context_title
