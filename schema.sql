@@ -26,7 +26,7 @@ CREATE TABLE hero (
 
 CREATE TABLE quest (
   questId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  nameOfTheQuest TEXT
+  questNumber INTEGER NOT NULL
 );
 
 CREATE TABLE step (
