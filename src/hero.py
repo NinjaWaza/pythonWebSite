@@ -1,3 +1,4 @@
+from src.database import Database
 from src.entity import Entity
 
 
@@ -53,6 +54,42 @@ class Hero(Entity):
     # ##############
 
     # TODO : load_to load_from
+
+    #load_from
+
+    def load_from_db(self):
+        """ fetch data from database, if _recursive is True fetch each steps too """
+        db = Database()
+
+        result = db.select_all(
+            '''
+                SELECT nameOfTheHero,lvl,weapon,armor,passive,sexe,idUser,numQuest,numStep
+                FROM hero
+            '''
+        )
+        if result is not None:
+            for row in result:
+                self.name = row[0]
+                self.lvl = row[1]
+                self.weapon = row[2]
+                self.armor = row[3]
+                self.passive = row[4]
+                self.sex = row[5]
+                self.user_id = row[6]
+                self.current_quest = row[7]
+                self.current_step = row[8]
+
+    def load_to_db(self):
+        """ persist instance to database, if _recursive is True persist each steps too """
+        db = Database()
+        db.update(
+            '''
+                UPDATE hero
+                SET lvl = ?,weapon = ?, armor = ?, passive = ?, sexe = ?, idUser = ?,numQuest = ?, numStep = ?
+                WHERE nameOfTheHero = ?
+            ''',
+            (self.lvl, self.weapon,self.armor,self.passive,self.sex, self.user_id, self.current_quest, self.current_step, self.name)
+        )
 
     # TODO
 

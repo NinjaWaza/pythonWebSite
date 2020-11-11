@@ -59,7 +59,7 @@ class Database:
         """ Return array of sqlit3 row with query result or 'Error' is something goes wrong """
         try:
             cursor = self.m_db.cursor()
-            cursor.execute('''INSERT INTO user(username,password) VALUES(?,?)''', _params)
+            cursor.execute(_query, _params)
             self.m_db.commit()
         except sqlite3.Error as error:
             print('SQLite error: %s' % (' '.join(error.args)))
