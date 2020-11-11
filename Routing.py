@@ -125,9 +125,10 @@ def create_hero():
         hero_passive = request.form['passive_of_the_hero']
         hero_sex = request.form['sex_of_the_hero']
         hero_user_id = globals.user.id
-        hero = Hero(hero_name,1,hero_weapon,10,hero_passive,hero_user_id,hero_sex,1,0)
-        hero.load_to_db() #Save the hero in the database
-        globals.user.add_hero(hero)
+        if Hero.check_hero_avaliable(hero_name):
+            hero = Hero(hero_name, 1, hero_weapon, 10, hero_passive, hero_user_id, hero_sex, 1, 0)
+            hero.load_to_db()  # Save the hero in the database
+            globals.user.add_hero(hero)
         return redirect(url_for("user_page"))
 
     return redirect(url_for("user_page"))
@@ -138,7 +139,8 @@ def user_page():
         return redirect(url_for('home_page'))
 
     if request.method == 'POST':
-        pass  #  TODO : computation
+        if "hero_name" in request.form:
+            globals.user.selected_hero(globals.user.get_hero_by_name(request.form['hero_name']))
 
     return render_template(
         'user.html',
@@ -170,3 +172,21 @@ def game_page():
         questbook=globals.questbook
     )
 
+@globals.app.route('/delete_hero', methods=['POST'])
+def delete_hero():
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+    log = None
+    user_choice = None
+    if request.method == 'POST':
+        globals.pp.pprint(request.form)
+        if "hero_name" in request.form:
+            result = globals.user.get_hero_by_name(request.form['hero_name'])
+            if(result):
+                if (globals.user.selected_hero == result):
+                    globals.user.selected_hero = None
+                for hero in globals.user.heroes:
+                    if hero.name == request.form['hero_name']:
+                        hero.delete()
+                        globals.user.heroes.remove(hero)
+    return redirect(url_for('user_page'))

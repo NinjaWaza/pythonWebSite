@@ -32,7 +32,7 @@ class User:
         return self.m_heroes
 
     def get_selected_hero(self):
-        return self.m_selectedHero
+        return self.m_selected_hero
 
     #Setters
 
@@ -49,7 +49,7 @@ class User:
         pass
 
     def set_selected_hero(self, _value):
-        self.m_selectedHero = _value
+        self.m_selected_hero = _value
 
     #Properties
 
@@ -98,13 +98,19 @@ class User:
         for hero in self.m_heroes:
             print(hero.toString())
 
+    def get_hero_by_name(self, hero_name):
+        for hero in self.heroes:
+            if (hero.name == hero_name):
+                return hero
+        return None
+
     # ##############
     # ## STATICS
     # ##############
 
     @staticmethod
     def register(_username, _password):
-        """ Register new user in database with couple(username, password), return True if add, False id doesnt """
+        """ Register new user in database with couple(username, password), return True if add, False if doesnt """
         db = Database()
         if db.select_one('''SELECT username FROM user WHERE username LIKE ?''', (_username, )) is not None:
             return "Username aleady taken"
