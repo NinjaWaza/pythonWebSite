@@ -20,7 +20,7 @@ CREATE TABLE hero (
   sex BOOLEAN DEFAULT FALSE,
   idUser INT NOT NULL,
   numQuest INT DEFAULT 1,
-  numStep INT DEFAULT 0,
+  numStep INT DEFAULT 1,
   FOREIGN KEY (idUser) REFERENCES user(idUser)
 );
 

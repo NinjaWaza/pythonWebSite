@@ -3,7 +3,7 @@ from src.entity import Entity
 
 
 class Hero(Entity):
-    def __init__(self,  _name, _lvl, _weapon, _armor, _passive, _user_id=None, _sex=None, _quest_id=None, _step_num=None):
+    def __init__(self,  _name, _lvl, _weapon, _armor, _passive, _user_id=None, _sex=None, _quest_id=1, _step_num=1):
         Entity.__init__(self, _name, _lvl, _weapon, _armor, _passive)
         self.m_user_id = _user_id
         self.m_sex = _sex
