@@ -21,6 +21,7 @@
         {% if the_heroes %}
             {% for hero in the_heroes %}
             <div class="theHeroDiv">
+
                 <p>Username of your hero : <strong>{{hero.name}}</strong></p>
                 {% if hero.sex == 0 %}
                     <p>The sexe of your hero is : Male</p>
@@ -29,6 +30,15 @@
                 {% endif %}
                 <p>Weapon : <strong>{{hero.weapon}}</strong></p>
                 <p>Your hero is currently at this quest : {{hero.current_quest}}, and your step in this quest is : {{ hero.current_step }} maybe your are blocked ? need help noob ?</p>
+                <form method="POST" action="/delete_hero">
+                    <input type="hidden" name="hero_name" value="{{hero.name}}">
+                    <button type="submit" >Delete Hero</button>
+
+                </form>
+                <form method="POST" action="">
+                    <input type="hidden" name="hero_name" value="{{hero.name}}">
+                    <button type="submit" >Select Hero</button>
+                </form>
             </div>
             <br />
             {% endfor %}

@@ -103,8 +103,6 @@ class Hero(Entity):
     def delete(self):
         db = Database()
         db.delete("DELETE FROM hero WHERE nameOfTheHero = ?",(self.name,)) #Delete the hero in the database
-        self = None #Delete the hero
-
     # TODO
 
     def toString(self):
@@ -114,6 +112,13 @@ class Hero(Entity):
     # ##############
     # ## STATICS
     # ##############
+    @staticmethod
+    def check_hero_avaliable( _name):
+        """ Register new hero in database with couple(_name, _lvl, _weapon, _armor, _passive, _user_id, _sex, _quest_id, _step_num), return a object hero if add, None if doesnt """
+        db = Database()
+        if not db.select_one('''SELECT nameOfTheHero FROM hero WHERE nameOfTheHero = ?''', (_name,)) :
+            return True
+        return False
 
     # TODO : wrong place
     # def getTheNameOfTheHero(self):
