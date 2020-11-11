@@ -3,7 +3,7 @@ from src.database import Database
 
 class Entity:
 
-    def __init__(self, _name, _lvl, _weapon, _armor, _passive):
+    def __init__(self, _name, _lvl=None, _weapon=None, _armor=None, _passive=None):
         self.m_name = _name
         self.m_lvl = _lvl
         self.m_weapon = _weapon

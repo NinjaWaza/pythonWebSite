@@ -38,7 +38,8 @@
     </div>
 
     Log #{{log}}# <br>
-    User current quest #{{user.quest}}# <br>
+    User current hero #{{user.selected_hero.name}}# <br>
+    Hero current quest #{{user.selected_hero.current_quest}}:{{user.selected_hero.current_step}}# <br>
     Last user choice #{{lastChoice}}#
 
     <form name="resetForm" action="{{ url_for('game_page') }}" method="post">

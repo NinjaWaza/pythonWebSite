@@ -30,7 +30,7 @@ class User:
         return self.m_heroes
 
     def get_selected_hero(self):
-        return self.m_selectedHero
+        return self.m_selected_hero
 
     # Setters
 
@@ -63,13 +63,13 @@ class User:
 
     def init_heroes(self):
         db = Database()
-        result = db.select_all(
+        result = db.select_all( # _name, _lvl, _weapon, _armor, _passive
             '''
-                SELECT nameOfTheHero, lvl, weapon, armor, passive, sex, numQuest, numStep 
-                FROM hero INNER JOIN user ON user.idUser = hero.idUser 
-                WHERE username LIKE ?
+                SELECT nameOfTheHero, lvl, weapon, armor, passive
+                FROM hero
+                WHERE idUser = ?
             ''',
-            (self.m_name,)
+            (self.id,)
         )
 
         if result is not None:
@@ -80,9 +80,6 @@ class User:
                     row[2],   # weapon
                     row[3],   # armor
                     row[4],   # passive
-                    row[5],   # sex
-                    row[6],   # numQuest
-                    row[7]    # numStep
                 ))
         else:
             self.m_heroes = None

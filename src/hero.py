@@ -3,25 +3,37 @@ from src.entity import Entity
 
 
 class Hero(Entity):
-    def __init__(self,  _name, _lvl, _weapon, _armor, _passive, _user_id=None, _sex=None, _quest_id=None, _step_num=None):
-        Entity.__init__(self,_name, _lvl, _weapon, _armor, _passive)
+    def __init__(self,  _name, _lvl=None, _weapon=None, _armor=None, _passive=None, _user_id=None, _sex=None, _quest_id=None, _step_num=None):
+        Entity.__init__(self, _name, _lvl, _weapon, _armor, _passive)
         self.m_user_id = _user_id
         self.m_sex = _sex
-        self.m_current_quest = _quest_id if _quest_id else None
-        self.m_current_step = _step_num if _step_num else None
+        self.m_current_quest = _quest_id
+        self.m_current_step = _step_num
 
     # Getter
 
     def get_user_id(self):
+        if self.m_user_id is None:
+            self.load_from_db()
+
         return self.m_user_id
 
     def get_sex(self):
+        if self.m_sex is None:
+            self.load_from_db()
+
         return self.m_sex
 
     def get_current_quest(self):
+        if self.m_current_quest is None:
+            self.load_from_db()
+
         return self.m_current_quest
 
     def get_current_step(self):
+        if self.m_current_step is None:
+            self.load_from_db()
+
         return self.m_current_step
 
     # Setter
@@ -61,23 +73,27 @@ class Hero(Entity):
         """ fetch data from database, if _recursive is True fetch each steps too """
         db = Database()
 
-        result = db.select_all(
+        result = db.select_one(
             '''
-                SELECT nameOfTheHero,lvl,weapon,armor,passive,sex,idUser,numQuest,numStep
+                SELECT lvl,weapon,armor,passive,sex,idUser,numQuest,numStep
                 FROM hero
-            '''
+                WHERE nameOfTheHero = ?
+            ''',
+            (self.name,)
         )
+
         if result is not None:
-            for row in result:
-                self.name = row[0]
-                self.lvl = row[1]
-                self.weapon = row[2]
-                self.armor = row[3]
-                self.passive = row[4]
-                self.sex = row[5]
-                self.user_id = row[6]
-                self.current_quest = row[7]
-                self.current_step = row[8]
+            print(f"hero {self.m_name}#################")
+            self.lvl = result[0]
+            self.weapon = result[1]
+            self.armor = result[2]
+            self.passive = result[3]
+            self.sex = True if result[4] == 1 else False
+            print(f"\tsex set to {self.sex}")
+            self.user_id = result[5]
+            self.current_quest = result[6]
+            self.current_step = result[7]
+            print("###########################")
 
     def load_to_db(self):
         """ persist instance to database, if _recursive is True persist each steps too """
@@ -89,7 +105,7 @@ class Hero(Entity):
                     SET lvl = ?,weapon = ?, armor = ?, passive = ?, sex = ?, idUser = ?,numQuest = ?, numStep = ?
                     WHERE nameOfTheHero = ?
                 ''',
-                (self.lvl, self.weapon, self.armor, self.passive, self.sex, self.user_id, self.current_quest,
+                (self.lvl, self.weapon, self.armor, self.passive, 1 if self.sex else 0, self.user_id, self.current_quest,
                  self.current_step, self.name)
             )
         else:

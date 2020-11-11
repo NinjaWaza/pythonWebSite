@@ -138,12 +138,15 @@ def user_page():
         return redirect(url_for('home_page'))
 
     if request.method == 'POST':
-        pass  #  TODO : computation
+        if "hero_selected" in request.form:
+            for hero in globals.user.heroes:
+                if hero.name == request.form['hero_selected']:
+                    globals.user.selected_hero = hero
 
     return render_template(
         'user.html',
         user=globals.user,
-        the_heroes=globals.user.get_heroes()
+        heroes=globals.user.heroes
     )
 
 # ######################
@@ -169,7 +172,7 @@ def user_page():
 # how to handle fight LOOP ( special template for fight loop )
 
 
-@globals.app.route('/game')
+@globals.app.route('/game', methods=['POST', 'GET'])
 def game_page():
     print("In game_page()")
     """ This route handle game interface """
