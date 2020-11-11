@@ -15,7 +15,7 @@
 ## On windows :
 
 #### Setting up the running environement :
-* Activate the virtual environment : `venv_name\Script\activate`
+* Activate the virtual environment : `venv_name\Scripts\activate`
 * Download the different libraries : `pip install -r requierement.txt`
 * Set the execution mod to developement : `set FLASK_ENV=developement`
 * Set the starting point of the project : `set FLASK_APP=app`

@@ -170,3 +170,27 @@ def game_page():
         questbook=globals.questbook
     )
 
+@globals.app.route('/delete_hero', methods=['POST'])
+def delete_hero():
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    log = None
+    user_choice = None
+
+    if request.method == 'POST':
+        if "hero_name" in request.form:
+            result = globals.user.get_hero_by_name(request.form['hero_name'])
+
+            if(result):
+                if (globals.user.selected_hero == result):
+                    globals.user.selected_hero = None
+                result.delete()
+
+    return render_template(
+        'game.html',
+        user=globals.user,
+        lastChoice=user_choice,
+        log=log,
+        questbook=globals.questbook
+    )

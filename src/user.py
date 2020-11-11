@@ -98,6 +98,11 @@ class User:
         for hero in self.m_heroes:
             print(hero.toString())
 
+    def get_hero_by_name(self,hero_name):
+        for hero in self.heroes:
+            if(hero.name == hero_name):
+                return hero
+
     # ##############
     # ## STATICS
     # ##############
