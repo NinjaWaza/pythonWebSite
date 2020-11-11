@@ -125,9 +125,10 @@ def create_hero():
         hero_passive = request.form['passive_of_the_hero']
         hero_sex = request.form['sex_of_the_hero']
         hero_user_id = globals.user.id
-        hero = Hero(hero_name,1,hero_weapon,10,hero_passive,hero_sex,hero_user_id,1,0)
-        hero.load_to_db() #Save the hero in the database
-        globals.user.add_hero(hero)
+        if Hero.check_hero_avaliable(hero_name):
+            hero = Hero(hero_name, 1, hero_weapon, 10, hero_passive, hero_user_id, hero_sex, 1, 0)
+            hero.load_to_db()  # Save the hero in the database
+            globals.user.add_hero(hero)
         return redirect(url_for("user_page"))
 
     return redirect(url_for("user_page"))
@@ -138,16 +139,56 @@ def user_page():
         return redirect(url_for('home_page'))
 
     if request.method == 'POST':
-        pass  #  TODO : computation
+        if "hero_selected" in request.form:
+            for hero in globals.user.heroes:
+                if hero.name == request.form['hero_selected']:
+                    globals.user.selected_hero = hero
+        if "hero_name" in request.form:
+            globals.user.selected_hero(globals.user.get_hero_by_name(request.form['hero_name']))
 
     return render_template(
         'user.html',
         user=globals.user,
-        the_heroes=globals.user.get_heroes()
+        heroes=globals.user.heroes
     )
 
 @globals.app.route('/game', methods=['POST', 'GET'])
 def game_page():
+    print("In game_page()")
+    """ This route handle game interface """
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    #if globals.user.selected_hero is None:
+        #return redirect(url_for('home_page'))
+
+    log = None
+    user_choice = None
+    tmp = ["", "", ""]  # TODO use dict
+
+
+    # current_quest :
+    #hero = globals.user.selected_hero
+
+    print("In game_page() 2")
+    #locals()[f"quest{hero.current_quest}"](step_display, step_context_title, step_context_text)
+    eval(f"globals.quest{1}")(tmp)
+    print(f"display : #{tmp[0]}#")
+
+    return render_template(
+        'game.html',
+        user=globals.user,
+        step_display=None,
+        step_context_title=None,
+        step_context_text=None,
+        log=log,
+        questbook=None
+    )
+
+
+@globals.app.route('/game_compute', methods=['POST'])
+def game_compute():
+    """ This route handle game interaction """
     if globals.user is None:
         return redirect(url_for('home_page'))
 
@@ -161,36 +202,36 @@ def game_page():
             user_choice = request.form['userChoice']
             # execute la fonction lié au step de la quete
             log = eval('globals.quest' + str(globals.user.quest["id"]) + 'step' + str(globals.user.quest["step"]))(user_choice)
+            
+    #quest2step2_diplay
+    # step_display
+    # step_context_title
+    # step_context_text
 
-    return render_template(
-        'game.html',
-        user=globals.user,
-        lastChoice=user_choice,
-        log=log,
-        questbook=globals.questbook
-    )
+    # return redirect(
+    #     'game.html',s
+    #     user=globals.user,
+    #     lastChoice=user_choice,
+    #     log=log,
+    #     questbook=globals.questbook
+    # )
+    pass
 
 @globals.app.route('/delete_hero', methods=['POST'])
 def delete_hero():
     if globals.user is None:
         return redirect(url_for('home_page'))
-
     log = None
     user_choice = None
-
     if request.method == 'POST':
+        globals.pp.pprint(request.form)
         if "hero_name" in request.form:
             result = globals.user.get_hero_by_name(request.form['hero_name'])
-
             if(result):
                 if (globals.user.selected_hero == result):
                     globals.user.selected_hero = None
-                result.delete()
-
-    return render_template(
-        'game.html',
-        user=globals.user,
-        lastChoice=user_choice,
-        log=log,
-        questbook=globals.questbook
-    )
+                for hero in globals.user.heroes:
+                    if hero.name == request.form['hero_name']:
+                        hero.delete()
+                        globals.user.heroes.remove(hero)
+    return redirect(url_for('user_page'))

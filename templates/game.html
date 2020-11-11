@@ -1,27 +1,36 @@
 {% extends 'base.html' %}
 
 {% block container %}
-    {{ super() }}
-    <p>block edit in game</p>
-    <div style="border: black 5px solid; width: 800px; height: 600px; margin: auto">
-        <div style="background-color: red; width: 790px; height: 390px;">
-            <p>Some nice tits pictures</p>
-        </div>
-        <div style="background-color: green; width: 790px; height: 200px;">
-            <h1>{{questbook.quests[user.quest.id].name}} ( step {{questbook.quests[user.quest.id].steps[user.quest.step].name +1}} )</h1>
-            <div>{{questbook.quests[user.quest.id].steps[user.quest.step].text |safe }}</div>
-        </div>
-    </div>
-    <div style="border: black 5px solid; width: 400px; margin: auto; text-align: center;">
-        <form name="choiceFrom" action="{{ url_for('game_page') }}" method="post">
-            Votre choix ?
 
+    <div id="game_area" style="border: black 5px solid; width: 800px; height: 600px; margin: auto">
+
+        <div id="game_display" style="background-color: red; width: 790px; height: 390px;">
+            <p>Some nice tits pictures</p>
+            {{ step_display }}
+        </div>
+
+        <div id="game_context" style="background-color: green; width: 790px; height: 200px;">
+            {# <h1>{#{questbook.quests[user.quest.id].name}} ( step {{questbook.quests[user.quest.id].steps[user.quest.step].name +1}#} )</h1>
+            <div>{#{questbook.quests[user.quest.id].steps[user.quest.step].text |safe }#}</div> #}
+            <div id="game_context_title">
+                {{ step_context_title }}
+            </div>
+            <div id="game_context_title">
+                {{ step_context_text }}
+            </div>
+        </div>
+
+    </div>
+
+    <div id="game_choice_area" style="border: black 5px solid; width: 400px; margin: auto; text-align: center;">
+        <form name="game_choice_form" action="{{ url_for('game_page') }}" method="post">
+            Votre choix ?
             <select name="userChoice">
-                {% for option in questbook.quests[user.quest.id].steps[user.quest.step].options %}
+                {#% for option in questbook.quests[user.quest.id].steps[user.quest.step].options %}
                     <option value="{{option.value}}">
                         {{ option.text }}
                     </option>
-                {% endfor %}
+                {% endfor %#}
             </select>
 
             <button type="submit">Valider</button>
@@ -29,7 +38,8 @@
     </div>
 
     Log #{{log}}# <br>
-    User current quest #{{user.quest}}# <br>
+    User current hero #{{user.selected_hero.name}}# <br>
+    Hero current quest #{{user.selected_hero.current_quest}}:{{user.selected_hero.current_step}}# <br>
     Last user choice #{{lastChoice}}#
 
     <form name="resetForm" action="{{ url_for('game_page') }}" method="post">

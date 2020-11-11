@@ -3,7 +3,7 @@
 {% block stylesheet %}
     {{ super() }}
     <style>
-        .theHeroDiv{
+        .heroes_area{
             color:rgb(68, 68, 68);
             border: 1px solid black;
             border-radius: 5px;
@@ -15,34 +15,46 @@
 {% endblock %}
 
 {% block container %}
-    <p>
-        Hello : {{ user.name }}
+    <h4>Hello : {{ user.name }}</h4>
+    {% if user.selected_hero %}
+        <p>Current selected hero : {{ user.selected_hero.name }}</p>
+        <form action="/game" method="POST">
+            <button type="submit">-> Continue quest <-</button>
+        </form>
+    {% else %}
+        <p>no selected hero !</p>
+    {% endif %}
+
         <br />
-        {% if the_heroes %}
-            {% for hero in the_heroes %}
-            <div class="theHeroDiv">
-                <p>Username of your hero : <strong>{{hero.name}}</strong></p>
-                {% if hero.sex == 0 %}
-                    <p>The sexe of your hero is : Male</p>
-                {% else %}
-                    <p>The sexe of your hero is : Female</p>
-                {% endif %}
-                <p>Weapon : <strong>{{hero.weapon}}</strong></p>
-                <p>Your hero is currently at this quest : {{hero.current_quest}}, and your step in this quest is : {{ hero.current_step }} maybe your are blocked ? need help noob ?</p>
-            </div>
+
+        {% if heroes %}
+            <p>Your available hero are :</p>
+            {% for hero in heroes %}
+                <div class="heroes_area">
+                    <p>Username of your hero : <strong>{{hero.name}}</strong></p>
+                    <p>The sexe of your hero is : <strong>{% if hero.sex %} Female{% else %} Male{% endif %}</strong></p>
+                    <p>Weapon : <strong>{{hero.weapon}}</strong></p>
+                    {% if hero.current_quest == 0 and hero.current_step == 0 %}
+                        <p>Your hero is currently at the first quest ! Come on !!</p>
+                    {% else %}
+                        <p>Your hero is currently at this quest : {{hero.current_quest}}, and your step in this quest is : {{ hero.current_step }} maybe your are blocked ? need help noob ?</p>
+                    {% endif %}
+                    <form method="POST" action="">
+                        <input type="hidden" name="hero_selected" value="{{ hero.name }}">
+                        <button type="submit" >Select {{ hero.name }} for quest</button>
+                    </form>
+                    <form method="POST" action="">
+                        <input type="hidden" name="hero_name" value="{{hero.name}}">
+                        <button type="submit" >Select Hero</button>
+                    </form>
+                </div>
             <br />
             {% endfor %}
         {% else %}
-            <p>the_heroes var is empty, create a first please !</p>
+            <p>No available, create your first please !</p>
         {% endif %}
         <br />
     </p>
-
-    <div class="continueTheQuest">
-        <form method="GET" action="/continueQuest">
-            <button type="submit" >Go to the quest</button>
-        </form>
-    </div>
 
     <div class="deleteAccount">
         <form method="POST" action="/deleteAccount">
