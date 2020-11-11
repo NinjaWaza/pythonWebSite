@@ -82,14 +82,23 @@ class Hero(Entity):
     def load_to_db(self):
         """ persist instance to database, if _recursive is True persist each steps too """
         db = Database()
-        db.update(
-            '''
-                UPDATE hero
-                SET lvl = ?,weapon = ?, armor = ?, passive = ?, sex = ?, idUser = ?,numQuest = ?, numStep = ?
-                WHERE nameOfTheHero = ?
-            ''',
-            (self.lvl, self.weapon,self.armor,self.passive,self.sex, self.user_id, self.current_quest, self.current_step, self.name)
-        )
+        if db.select_one("SELECT idHero FROM hero WHERE nameOfTheHero = ?",(self.name,)):
+            db.update(
+                '''
+                    UPDATE hero
+                    SET lvl = ?,weapon = ?, armor = ?, passive = ?, sex = ?, idUser = ?,numQuest = ?, numStep = ?
+                    WHERE nameOfTheHero = ?
+                ''',
+                (self.lvl, self.weapon, self.armor, self.passive, self.sex, self.user_id, self.current_quest,
+                 self.current_step, self.name)
+            )
+        else:
+            db.add(
+                '''
+                    INSERT INTO hero(nameOfTheHero,lvl,weapon,armor,passive,sex,idUser,numQuest,numStep)
+                    VALUES(?,?,?,?,?,?,?,?,?)
+                ''',(self.name,self.lvl, self.weapon, self.armor, self.passive, self.sex, self.user_id, self.current_quest,self.current_step)
+            )
 
     def delete(self):
         db = Database()

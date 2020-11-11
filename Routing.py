@@ -125,7 +125,7 @@ def create_hero():
         hero_passive = request.form['passive_of_the_hero']
         hero_sex = request.form['sex_of_the_hero']
         hero_user_id = globals.user.id
-        hero = Hero(hero_name,1,hero_weapon,10,hero_passive,hero_sex,hero_user_id,1,0)
+        hero = Hero(hero_name,1,hero_weapon,10,hero_passive,hero_user_id,hero_sex,1,0)
         hero.load_to_db() #Save the hero in the database
         globals.user.add_hero(hero)
         return redirect(url_for("user_page"))
