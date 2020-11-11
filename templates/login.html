@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block stylesheet %}
+    {{ super() }}
+    <style>
+        .welcomeMessage{
+            text-align:center;
+            font-size: 35px;
+            margin-top: 180px;
+        }
+
+        .formLogin{
+            text-align:center;
+            font-size: 25px;
+            margin-top: 100px;
+        }
+    </style>
+{% endblock %}
+
+{% block container %}
+    <p class="welcomeMessage">
+        Welcome to our game : DigitaGame
+        <br><br>
+        Please login to continue !
+    </p>
+    <div class="formLogin">
+        <form action="" method="POST">
+            <label for="username_input">Username :</label>
+            <input type="text" name="username_input" required>
+            <br>
+            <label for="password_input">Password :</label>
+            <input type="password" name="password_input" required>
+            <br><br>
+            <input type="submit" value="Connexion">
+        </form>
+        {% if error_messages %}
+            <div class="error">
+                WARNING :
+                {% for error in error_messages %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

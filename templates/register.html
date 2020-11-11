@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block stylesheet %}
+    {{ super() }}
+    <style>
+        .registerPage{
+            text-align:center;
+            font-size: 35px;
+            margin-top: 30px;
+        }
+
+        .formRegister{
+            text-align:center;
+            font-size: 25px;
+            margin-top: 100px;
+        }
+    </style>
+{% endblock %}
+
+{% block container %}
+    <div class="registerPage">
+        Register page of : DigitaGame
+        <br><br>
+        <p>
+            Please create your account with a unique username and a <strong>STRONG</strong> password !
+        </p>
+    </div>
+    <div class="formRegister">
+        <form action="" method="POST">
+            <label for="username_input">Username :</label>
+            <input name="username_input" type="text" required>
+            <br>
+            <label for="password_input">Password :</label>
+            <input name="password_input" type="password" required>
+            <br>
+            <label for="password_confirm_input">Confirm Password :</label>
+            <input name="password_confirm_input" type="password" required>
+            <br><br>
+            <input type="submit" value="Create an account">
+        </form>
+    </div>
+    {% if error_messages %}
+            <div class="error">
+                WARNING :
+                {% for error in error_messages %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+    {% endif %}
+{% endblock %}

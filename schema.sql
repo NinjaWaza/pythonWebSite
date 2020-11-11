@@ -16,10 +16,10 @@ CREATE TABLE hero (
   lvl INT DEFAULT 1,
   weapon TEXT DEFAULT "Hands",
   armor INT DEFAULT 0,
-  passive TEXT,
-  sexe BOOLEAN DEFAULT 0,
-  idUser INT,
-  numQuest INT DEFAULT 0,
+  passive TEXT DEFAULT "None",
+  sex BOOLEAN DEFAULT FALSE,
+  idUser INT NOT NULL,
+  numQuest INT DEFAULT 1,
   numStep INT DEFAULT 0,
   FOREIGN KEY (idUser) REFERENCES user(idUser)
 );
@@ -30,7 +30,6 @@ CREATE TABLE quest (
 );
 
 CREATE TABLE step (
-  stepId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   stepNumber INT NOT NULL,
   textOfTheStep TEXT DEFAULT "Text of the step isn't set yet",
   questId INT,
@@ -41,15 +40,22 @@ INSERT INTO user(username,password)
 VALUES
 ("theodore","$2b$12$wodx1pJqggHk7liJkwT22uLDMWxHBvp1lRGje.Ic05TISPPP5sRtm");
 
-INSERT INTO hero(nameOfTheHero,lvl,weapon,armor,passive,sexe,idUser)
+INSERT INTO hero(nameOfTheHero,lvl,weapon,armor,passive,sex,idUser)
 VALUES
 ("My first hero", 1,"Epee",10,"Nothing",0,1);
 
 
 INSERT INTO quest(nameOfTheQuest)
 VALUES
-("The name of the quest");
+("The first quest"),
+("The second quest"),
+("The third quest");
 
 INSERT INTO step(textOfTheStep,questId,stepNumber)
 VALUES
-("The step text ...",1,0);
+("The step 0 of the first quest",1,0),
+("The step 1 of the first quest",1,1),
+("The step 0 of the second quest",2,0),
+("The step 1 of the second quest",2,1),
+("The step 0 of the third quest",3,0),
+("The step 1 of the third quest",3,1);
