@@ -37,7 +37,11 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
+<<<<<<< Updated upstream
 VIRTUAL_ENV="C:\Users\home\Desktop\Digitalents\pythonWebSite\VirtualEnv"
+=======
+VIRTUAL_ENV="C:\Users\home\Desktop\Digitalents\ProjetPython\VirtualEnv"
+>>>>>>> Stashed changes
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

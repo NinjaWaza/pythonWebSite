@@ -8,7 +8,11 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
+<<<<<<< Updated upstream
 set VIRTUAL_ENV=C:\Users\home\Desktop\Digitalents\pythonWebSite\VirtualEnv
+=======
+set VIRTUAL_ENV=C:\Users\home\Desktop\Digitalents\ProjetPython\VirtualEnv
+>>>>>>> Stashed changes
 
 if not defined PROMPT set PROMPT=$P$G
 

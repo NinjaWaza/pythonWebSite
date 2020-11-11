@@ -76,12 +76,34 @@ def deleteAccount():
             print(f"The user {session['username']} have been deleted") #Just for having some log in the console (and for debug)
     return redirect("/logout") #Redirect to the logout function
 
+<<<<<<< Updated upstream
 @app.route('/logout') #Route for the logout
 def logout():
     """The logout function will destruct everything in the session and then redirect to the main route."""
     for value in session.copy():
         session.pop(value, None) #Destruct all values in the session
     return redirect("/") #Redirect to the main route
+=======
+@app.route('/deleteAHero', methods=["POST"])
+def deleteAHero():
+    """deleteAHero will delete an existing hero and remove it from the database before redirecting to the main route"""
+    MyDatabaseAccess = get_db()
+    HeroToDelete = request.form['HeroToDelete']
+    resultatDelete = MyDatabaseAccess.execute("DELETE FROM 'hero' WHERE nameOfTheHero = '%s'" % HeroToDelete)
+    resultatDelete = MyDatabaseAccess.commit()
+    print(f"The hero {HeroToDelete} has been deleted")  # Just for having some log in the console (and for debug)
+    pageToLoad = "game.html"  # Set the pageToLoad variable to gamePage.html
+    theHeroesList = theConnectedUser.getTheListOfHeroes()
+    theHeroesList.remove("{{HeroToDelete}}")
+    return render_template(pageToLoad, theHeroes=[theHeroesList])
+
+# @app.route('/logout') #Route for the logout
+# def logout():
+#     """The logout function will destruct everything in the session and then redirect to the main route."""
+#     for value in session.copy():
+#         session.pop(value, None) #Destruct all values in the session
+#     return redirect("/") #Redirect to the main route
+>>>>>>> Stashed changes
 
 @app.route('/createAHero', methods=["GET", "POST"]) #Route for create a new hero
 def createAHero():
@@ -113,6 +135,7 @@ def deleteAHero():
             print(f"The hero {HeroToDelete} has been deleted")  # Just for having some log in the console (and for debug)
             theHeroesList.remove(i) #remove the Hero from the list
     return render_template(pageToLoad, theHeroes=[theHeroesList])
+
 @app.route('/registerPage', methods=["GET", "POST"]) #Route for the register page
 def registerAUser():
     print("We in registerAUser function")
