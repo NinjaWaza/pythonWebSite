@@ -69,6 +69,10 @@ class Database:
             print(traceback.format_exception(exc_type, exc_value, exc_tb))
             return "Error"
 
+    def delete(self, _query, _params=None):
+        """ Return array of sqlit3 row with query result or 'Error' is something goes wrong """
+        self.update(_query, _params)
+
     def close_db(self):
         if self.m_db is not None:
             self.m_db.close()

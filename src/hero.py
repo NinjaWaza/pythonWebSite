@@ -63,7 +63,7 @@ class Hero(Entity):
 
         result = db.select_all(
             '''
-                SELECT nameOfTheHero,lvl,weapon,armor,passive,sexe,idUser,numQuest,numStep
+                SELECT nameOfTheHero,lvl,weapon,armor,passive,sex,idUser,numQuest,numStep
                 FROM hero
             '''
         )
@@ -85,11 +85,16 @@ class Hero(Entity):
         db.update(
             '''
                 UPDATE hero
-                SET lvl = ?,weapon = ?, armor = ?, passive = ?, sexe = ?, idUser = ?,numQuest = ?, numStep = ?
+                SET lvl = ?,weapon = ?, armor = ?, passive = ?, sex = ?, idUser = ?,numQuest = ?, numStep = ?
                 WHERE nameOfTheHero = ?
             ''',
             (self.lvl, self.weapon,self.armor,self.passive,self.sex, self.user_id, self.current_quest, self.current_step, self.name)
         )
+
+    def delete(self):
+        db = Database()
+        db.delete("DELETE FROM hero WHERE nameOfTheHero = ?",(self.name,)) #Delete the hero in the database
+        self = None #Delete the hero
 
     # TODO
 
@@ -104,27 +109,3 @@ class Hero(Entity):
     # TODO : wrong place
     # def getTheNameOfTheHero(self):
     #     return self.name
-
-    # TODO : refactor if useful
-    # @staticmethod
-    # def createATotallyNewHero(idOfTheConnectedUser):
-    #     # We have to get the last step id for this specific quest
-    #     myDatabaseAccess = get_db()  # Get the database in a variable
-    #
-    #     # Before everything we have to check if the name is unique or not
-    #     resultatRequest = myDatabaseAccess.execute(
-    #         "SELECT nameOfTheHero FROM hero WHERE nameOfTheHero = '%s'" % request.form[
-    #             'nameOfTheHero']).fetchone()  # Get the hero name that match with the hero name that the user give in the form (useful to check if the hero name already exist in the database)
-    #     if (
-    #             resultatRequest is None):  # Check if the result of the SQL request is to none, that will mean no hero already have this name
-    #         infosHero = [request.form['nameOfTheHero'], request.form['weaponOfTheHero'],
-    #                      request.form['passiveOfTheHero'], request.form['sexeOfTheHero'], idOfTheConnectedUser]
-    #         resultatOfTheInsertRequest = myDatabaseAccess.execute(
-    #             "INSERT INTO hero(nameOfTheHero,weapon,passive,sexe,idUser) VALUES(?,?,?,?,?)",
-    #             infosHero)  # Insert into the database the hero
-    #         resultatOfTheInsertRequest = myDatabaseAccess.commit()  # Save the change in the database.db file
-    #         theNewHero = Hero(request.form['nameOfTheHero'], 1, request.form['weaponOfTheHero'], 0,
-    #                           request.form['passiveOfTheHero'], request.form['sexeOfTheHero'],
-    #                           idOfTheConnectedUser)  # Create a Hero object
-    #         return theNewHero  # Return this hero object
-    #     return None  # Return none because we can't successfully create the hero in the database, maybe the hero name is already taken

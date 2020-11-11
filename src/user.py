@@ -67,7 +67,7 @@ class User:
         db = Database()
         result = db.select_all(
             '''
-                SELECT nameOfTheHero, lvl, weapon, armor, passive, sexe, numQuest, numStep 
+                SELECT nameOfTheHero, lvl, weapon, armor, passive, sex, numQuest, numStep 
                 FROM hero INNER JOIN user ON user.idUser = hero.idUser 
                 WHERE username LIKE ?
             ''',
@@ -125,6 +125,25 @@ class User:
             if result[1] != "":
                 if bcrypt.checkpw(_password.encode('utf-8'), result[1].encode('utf-8')):  # Check if passwords are the same
                     return User(result[0], _username)
+                else:
+                    return "Error : Invalid Password"
+            else:
+                return "Error : Invalid Username"
+        else:
+            return "Error : no user found"
+
+    @staticmethod
+    def delete(_username, _password, user):
+        """ Delete with a check of the password in Database """
+        db = Database()
+        result = db.select_one('''SELECT idUser, password FROM user WHERE username LIKE ?''', (_username, ))
+
+        if result is not None:
+            if result[1] != "":
+                if bcrypt.checkpw(_password.encode('utf-8'), result[1].encode('utf-8')):  # Check if passwords are the same
+                    for hero in user.heroes:
+                        hero.delete()
+                    db.delete("DELETE FROM user WHERE username = ?", (_username,))
                 else:
                     return "Error : Invalid Password"
             else:

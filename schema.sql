@@ -40,7 +40,7 @@ INSERT INTO user(username,password)
 VALUES
 ("theodore","$2b$12$wodx1pJqggHk7liJkwT22uLDMWxHBvp1lRGje.Ic05TISPPP5sRtm");
 
-INSERT INTO hero(nameOfTheHero,lvl,weapon,armor,passive,sexe,idUser)
+INSERT INTO hero(nameOfTheHero,lvl,weapon,armor,passive,sex,idUser)
 VALUES
 ("My first hero", 1,"Epee",10,"Nothing",0,1);
 

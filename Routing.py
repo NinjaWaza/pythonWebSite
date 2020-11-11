@@ -102,6 +102,18 @@ def logout_page():
     return redirect(url_for('home_page'))
 
 
+@globals.app.route('/deleteAccount', methods=['POST'])
+def delete_account():
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    if request.method == 'POST':
+        if "password" in request.form :
+            User.delete(globals.user.name, request.form['password'],globals.user)
+            globals.user = None
+            return redirect(url_for("home_page"))
+    return redirect(url_for("user_page"))
+
 @globals.app.route('/create_hero', methods=['POST'])
 def create_hero():
     if globals.user is None:
