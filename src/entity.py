@@ -1,3 +1,6 @@
+from src.database import Database
+
+
 class Entity:
 
     def __init__(self, _name, _lvl, _weapon, _armor, _passive):
@@ -57,7 +60,6 @@ class Entity:
     # ## METHODS
     # ##############
 
-    # TODO : load_to load_from
 
     # ##############
     # ## STATICS

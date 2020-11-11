@@ -1,4 +1,7 @@
 import pprint
+
+from src.database import Database
+from src.hero import Hero
 from src.user import User
 from src.monster import Monster
 
@@ -98,6 +101,24 @@ def logout_page():
 
     return redirect(url_for('home_page'))
 
+
+@globals.app.route('/create_hero', methods=['POST'])
+def create_hero():
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    if request.method == 'POST':
+        hero_name = request.form['name_of_the_hero']
+        hero_weapon = request.form['weapon_of_the_hero']
+        hero_passive = request.form['passive_of_the_hero']
+        hero_sex = request.form['sex_of_the_hero']
+        hero_user_id = globals.user.id
+        hero = Hero(hero_name,1,hero_weapon,10,hero_passive,hero_sex,hero_user_id,1,0)
+        hero.load_to_db() #Save the hero in the database
+        globals.user.add_hero(hero)
+        return redirect(url_for("user_page"))
+
+    return redirect(url_for("user_page"))
 
 @globals.app.route('/user', methods=['POST', 'GET'])
 def user_page():

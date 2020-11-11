@@ -16,9 +16,9 @@ CREATE TABLE hero (
   lvl INT DEFAULT 1,
   weapon TEXT DEFAULT "Hands",
   armor INT DEFAULT 0,
-  passive TEXT,
-  sexe BOOLEAN DEFAULT 0,
-  idUser INT,
+  passive TEXT DEFAULT "None",
+  sex BOOLEAN DEFAULT 0,
+  idUser INT NOT NULL,
   numQuest INT DEFAULT 1,
   numStep INT DEFAULT 0,
   FOREIGN KEY (idUser) REFERENCES user(idUser)
