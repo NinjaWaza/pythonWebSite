@@ -39,6 +39,12 @@ questbook = QuestBook()
 #     [quest]
 # )
 
+def hello():
+    print("hello from global")
+
+def quest1(_val):
+    _val[0] = "success"
+    print("I say hello !")
 
 # def quest0step0(_choice):
 #     if _choice == "male":

@@ -10,9 +10,7 @@ class Entity:
         self.m_armor = _armor
         self.m_passive = _passive
 
-    # TODO : getter / setter
-
-    #Getter
+    # Getter
 
     def get_name(self):
         return self.m_name
@@ -29,37 +27,34 @@ class Entity:
     def get_passive(self):
         return self.m_passive
 
-    #Setter
+    # Setter
 
     def set_name(self, value):
         self.m_name = value
 
     def set_lvl(self, value):
-        self.m_lvl= value
+        self.m_lvl = value
 
     def set_weapon(self, value):
-        self.m_weapon= value
+        self.m_weapon = value
 
     def set_armor(self, value):
-        self.m_weapon= value
+        self.m_weapon = value
 
     def set_passive(self, value):
         self.m_passive = value
 
+    # Properties
 
-    #Properties
-
-    name = property(get_name,set_name)
+    name = property(get_name, set_name)
     lvl = property(get_lvl, set_lvl)
     weapon = property(get_weapon, set_weapon)
     armor = property(get_armor, set_armor)
     passive = property(get_passive, set_passive)
 
-
     # ##############
     # ## METHODS
     # ##############
-
 
     # ##############
     # ## STATICS

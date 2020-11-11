@@ -146,8 +146,66 @@ def user_page():
         the_heroes=globals.user.get_heroes()
     )
 
-@globals.app.route('/game', methods=['POST', 'GET'])
+# ######################
+
+# text = db.request() : => string
+# var[] = text.foundVariable() # if {% heros.sex %}
+# sex = var[0][0].Attr(var[0][1])
+#
+# {
+#     "sex" : True
+#     "live" : 1000
+# }
+#
+# maList
+# maList.__getattribute__("count")()
+
+# ######################
+
+# init game
+# display current game step
+# hanlde user choice
+# next step
+# how to handle fight LOOP ( special template for fight loop )
+
+
+@globals.app.route('/game')
 def game_page():
+    print("In game_page()")
+    """ This route handle game interface """
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    #if globals.user.selected_hero is None:
+        #return redirect(url_for('home_page'))
+
+    log = None
+    user_choice = None
+    tmp = ["", "", ""]  # TODO use dict
+
+
+    # current_quest :
+    #hero = globals.user.selected_hero
+
+    print("In game_page() 2")
+    #locals()[f"quest{hero.current_quest}"](step_display, step_context_title, step_context_text)
+    eval(f"globals.quest{1}")(tmp)
+    print(f"display : #{tmp[0]}#")
+
+    return render_template(
+        'game.html',
+        user=globals.user,
+        step_display=None,
+        step_context_title=None,
+        step_context_text=None,
+        log=log,
+        questbook=None
+    )
+
+
+@globals.app.route('/game_compute', methods=['POST'])
+def game_compute():
+    """ This route handle game interaction """
     if globals.user is None:
         return redirect(url_for('home_page'))
 
@@ -162,11 +220,16 @@ def game_page():
             # execute la fonction lié au step de la quete
             log = eval('globals.quest' + str(globals.user.quest["id"]) + 'step' + str(globals.user.quest["step"]))(user_choice)
 
-    return render_template(
-        'game.html',
-        user=globals.user,
-        lastChoice=user_choice,
-        log=log,
-        questbook=globals.questbook
-    )
+    #quest2step2_diplay
+    # step_display
+    # step_context_title
+    # step_context_text
 
+    # return redirect(
+    #     'game.html',s
+    #     user=globals.user,
+    #     lastChoice=user_choice,
+    #     log=log,
+    #     questbook=globals.questbook
+    # )
+    pass
