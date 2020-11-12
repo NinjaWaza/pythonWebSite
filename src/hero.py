@@ -1,13 +1,15 @@
-from src.database import Database
-from src.entity import Entity
+#from src.database import Database
+#from src.entity import Entity
+from entity import Entity
+from database import Database
 
 
 class Hero(Entity):
-    def __init__(self,  _name, _lvl, _weapon, _armor, _passive, _user_id=None, _sex=None, _quest_id=1, _step_num=1):
-        Entity.__init__(self, _name, _lvl, _weapon, _armor, _passive)
+    def __init__(self,  _name, _lvl, _weapon, _armor,_passive, _type_charactere = 1, _user_id=None, _sex=None, _quest_num=1, _step_num=1):
+        Entity.__init__(self,_name, _lvl, _weapon, _armor, _passive, _type_charactere)
         self.m_user_id = _user_id
-        self.m_sex = _sex
-        self.m_current_quest = _quest_id
+        self.m_sex = _sex # 1 = Female | 0 = Male
+        self.m_current_quest = _quest_num
         self.m_current_step = _step_num
 
     # Getter
