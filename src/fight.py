@@ -6,11 +6,14 @@
 # - Add round by round system
 
 from hero import Hero
+from entity import Entity
+from database import Database
 from monster import Monster
 from random import randrange
 import random
 import entity
-
+hero = Hero("francis", 1, "Axe", 20, "rieng", 1, 1, 1, 1, 1)
+monster = Monster("Theodore", 1, "Hands", 20, "tropbg", 0)
 def fight(_hero, _monster):
 	if _hero.sex == 1:
 		player_1 = _hero
@@ -55,3 +58,5 @@ def choice(fighter):
 		return input("Quel est votre choix ?")
 	else:
 		return randrange(0, 2) 
+
+fight(hero,monster)

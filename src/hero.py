@@ -1,5 +1,7 @@
-from src.database import Database
-from src.entity import Entity
+#from src.database import Database
+#from src.entity import Entity
+from entity import Entity
+from database import Database
 
 
 class Hero(Entity):

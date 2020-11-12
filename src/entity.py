@@ -1,5 +1,6 @@
 from random import random
-from src.database import Database
+#from src.database import Database
+from database import Database
 
 
 class Entity:
