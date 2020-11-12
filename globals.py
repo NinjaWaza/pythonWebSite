@@ -62,8 +62,9 @@ def quest1(_value):
     global user
     current_step = user.selected_hero.current_step
     if current_step == 1:
-        user.sex = (_value == "female")
+        user.selected_hero.sex = (_value == "female")
         user.selected_hero.current_step = 2
+        user.selected_hero.load_to_db()
 
         return f"Action (1, {current_step}) : user sex is now {_value}"
     if current_step == 2:
@@ -72,6 +73,7 @@ def quest1(_value):
         if _value == "stay":
             user.selected_hero.current_quest = 2
             user.selected_hero.current_step = 1
+            user.selected_hero.load_to_db()
 
         return f"Action (1, {current_step}) : hero now {_value}"
 

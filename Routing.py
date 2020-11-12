@@ -194,23 +194,16 @@ def game_compute():
     if globals.user.selected_hero is None:
         return redirect(url_for('home_page'))
 
-    #log = None
-    user_choice = None
-
     if request.method == 'POST':
         if "reset_quest" in request.form:
-            globals.user.set_quest(0, 0)
-        elif "userChoice" in request.form:
-            user_choice = request.form['userChoice']
-            log = eval(f"globals.quest{globals.user.selected_hero.current_quest}")(user_choice)
+            globals.user.selected_hero.current_quest = 1
+            globals.user.selected_hero.current_step = 1
+
+        if "userChoice" in request.form:
+            log = eval(f"globals.quest{globals.user.selected_hero.current_quest}")(request.form['userChoice'])
             globals.log.append(log)
             if not log:
                 return redirect(url_for("game_over_page"))
-
-    #quest2step2_diplay
-    # step_display
-    # step_context_title
-    # step_context_text
 
     return redirect(url_for("game_page"))
 
