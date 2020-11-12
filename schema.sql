@@ -20,19 +20,21 @@ CREATE TABLE hero (
   sex BOOLEAN DEFAULT FALSE,
   idUser INT NOT NULL,
   numQuest INT DEFAULT 1,
-  numStep INT DEFAULT 0,
+  numStep INT DEFAULT 1,
   FOREIGN KEY (idUser) REFERENCES user(idUser)
 );
 
 CREATE TABLE quest (
   questId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  nameOfTheQuest TEXT
+  questNumber INTEGER UNIQUE NOT NULL,
+  questName Text NOT NULL
 );
 
 CREATE TABLE step (
   stepNumber INT NOT NULL,
-  textOfTheStep TEXT DEFAULT "Text of the step isn't set yet",
-  questId INT,
+  textOfTheStep TEXT NOT NULL ,
+  questId INT NOT NULL ,
+  stepOptions TEXT NOT NULL ,
   FOREIGN KEY (questId) REFERENCES quest(questId)
 );
 
@@ -45,17 +47,19 @@ VALUES
 ("My first hero", 1,"Epee",10,"Nothing",0,1);
 
 
-INSERT INTO quest(nameOfTheQuest)
+INSERT INTO quest(questNumber, questName)
 VALUES
-("The first quest"),
-("The second quest"),
-("The third quest");
+(1, "It's the right gender ?!"),
+(2, "Initial quest"),
+(3, "Fight tutorial");
 
-INSERT INTO step(textOfTheStep,questId,stepNumber)
+INSERT INTO step(questId, stepNumber, textOfTheStep, stepOptions)
 VALUES
-("The step 0 of the first quest",1,0),
-("The step 1 of the first quest",1,1),
-("The step 0 of the second quest",2,0),
-("The step 1 of the second quest",2,1),
-("The step 0 of the third quest",3,0),
-("The step 1 of the third quest",3,1);
+    (1, 1, "Your currently a |-sex_label|. Are you sure ? What's your sex ?", "female-female|male-male"),
+    (1, 2, "Well you choose to be |-sex_label| for the rest of your life. Youre choice ... And so wath's for next ?", "walk-walk away|stay-stay"),
+    (2, 1, "How, you still there ... Mmm, I have nothing for you. Just go !", "stay-stay|goto-go to aventure"),
+    (2, 2, "I've understand ! You think I am one of this stange game PNJ ?", "yes-you look so|no-a what?"),
+    (2, 3, "Mm, you know how to speak to me, to importante peaple. You must be reach in a great family ?", "no-Absolutly not|yes-Yes, I am sire"),
+    (2, 4, "Because you seems to be honnest with me, let me give you a precious weapon! My stick !", "no-No thanks|yes-OMG so good"),
+    (3, 1, "Oh, this way ! A savage fox name as 'chiper' just pass. Go and take back my stick !|chiper_the_gox", "start-start fighting|run-run away"),
+    (3, 2, "Nice, first fight ! You can keep the stick for your futur periple, know go.","home-go back home|garden-go walk in garden");

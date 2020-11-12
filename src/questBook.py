@@ -23,7 +23,12 @@ class QuestBook:
 
     def get_quest_by_id(self, id_of_the_quest):
         for quest in self.quests:
-            if(quest.id == id_of_the_quest):
+            if quest.id == id_of_the_quest:
+                return quest
+
+    def get_quest_by_number(self, _value):
+        for quest in self.quests:
+            if quest.number == _value:
                 return quest
 
     def add_quest(self, _value):
@@ -36,6 +41,7 @@ class QuestBook:
             '''
                 SELECT questId
                 FROM quest
+                ORDER BY questNumber
             '''
         )
 

@@ -43,9 +43,9 @@
                         <input type="hidden" name="hero_selected" value="{{ hero.name }}">
                         <button type="submit" >Select {{ hero.name }} for quest</button>
                     </form>
-                    <form method="POST" action="">
-                        <input type="hidden" name="hero_name" value="{{hero.name}}">
-                        <button type="submit" >Select Hero</button>
+                    <form method="POST" action="/delete_hero">
+                        <input type="hidden" name="hero_selected" value="{{hero.name}}">
+                        <button type="submit" >Delete hero</button>
                     </form>
                 </div>
             <br />
@@ -78,9 +78,9 @@
             </select>
             <br />
             <label for="sex_of_the_hero">Select the sex of your hero :</label>
-            <select name="sex_of_the_hero" value="0">
-                <option value="0">Male</option>
-                <option value="1">Female</option>
+            <select name="sex_of_the_hero">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
             </select><br />
             <label for="passive_of_the_hero">Select the passive of your hero :</label>
             <select name="passive_of_the_hero" value="nothing">

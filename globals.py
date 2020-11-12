@@ -8,58 +8,74 @@ from src.questBook import QuestBook
 """ Flask app global instance """
 app = Flask(__name__)
 
-""" pprint global instance """
+""" User global instance, DEBUG PURPOSE """
+log = list()
+log.append("Launch")
+
+""" pprint global instance, DEBUG PURPOSE """
 pp = pprint.PrettyPrinter(indent=4)
 
 """ User global instance """
 user = None
 
+""" Questbook global instance """
 questbook = QuestBook()
 
 
-# step00 = QuestStep(
-#     0,
-#     "Bonjour, de quelle sexe est tu ?</br>- homme plus de vie</br>- femme joue en premier",
-#     [{'value': 'male', 'text': 'Homme'}, {'value': 'femal', 'text': 'Femme'}]
-# )
-#
-# step01 = QuestStep(
-#     1,
-#     "Maintenant que ton sexe est : ??\nVeux-tu continué ?",
-#     [{'value': 'yes', 'text': 'Oui'}, {'value': 'no', 'text': 'Non'}]
-# )
-#
-# quest = Quest(
-#     "Quête initiation",
-#     [step00, step01]
-# )
-#
-# questbook = QuestBook(
-#     {"id": 0, "step": 1},
-#     [quest]
-# )
+def generate_step_context():
+    global user
+    global questbook
+    global pp
 
-def hello():
-    print("hello from global")
+    tmp_quest = questbook.get_quest_by_number(user.selected_hero.current_quest)
+    tmp_step = questbook.get_quest_by_number(user.selected_hero.current_quest).get_a_step_by_number(user.selected_hero.current_step)
 
-def quest1(_val):
-    _val[0] = "success"
-    print("I say hello !")
+    # Load ASCII art picture
+    step_display = "boooooooobies"
 
-# def quest0step0(_choice):
-#     if _choice == "male":
-#         user.sex = "male"
-#     else:
-#         user.sex = "female"
-#
-#     # set new user current quest
-#     user.set_quest(0, 1)
-#
-#     return "doing some stuff about quest"
+    # Load title of the quest for this step context
+    step_context_title = f"{tmp_quest.name} : (step {tmp_step.number} on {len(tmp_quest.steps)})"
+
+    # Load text of the step for this step context
+    step_context_text = ""
+    for attr in tmp_step.text.split("|"):
+        if "-" in attr:
+            step_context_text += user.selected_hero.__getattribute__(attr[1:])
+        else:
+            step_context_text += attr
+
+    # Load options of the step for this step context
+    step_context_options = list()
+    for attr in tmp_step.options.split("|"):
+        opt = attr.split("-")
+        step_context_options.append({"value": opt[0], "text": opt[1]})
+
+    return {
+        'step_display': step_display,
+        'step_context_title': step_context_title,
+        'step_context_text': step_context_text,
+        'step_context_options': step_context_options
+    }
 
 
-# def quest0step1(_choice):
-#     # go to next quest
-#     # user.set_quest(0, 1)
-#
-#     return "final quest"
+def quest1(_value):
+    global user
+    current_step = user.selected_hero.current_step
+    if current_step == 1:
+        user.sex = (_value == "female")
+        user.selected_hero.current_step = 2
+
+        return f"Action (1, {current_step}) : user sex is now {_value}"
+    if current_step == 2:
+        if _value == "walk":
+            return False
+        if _value == "stay":
+            user.selected_hero.current_quest = 2
+            user.selected_hero.current_step = 1
+
+        return f"Action (1, {current_step}) : hero now {_value}"
+
+
+def quest2(_value):
+    global user
+    pass

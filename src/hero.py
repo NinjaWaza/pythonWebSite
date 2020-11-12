@@ -7,6 +7,7 @@ class Hero(Entity):
         Entity.__init__(self, _name, _lvl, _weapon, _armor, _passive)
         self.m_user_id = _user_id
         self.m_sex = _sex
+        print(f"sex for {self.m_name} : {self.sex}")
         self.m_current_quest = _quest_id
         self.m_current_step = _step_num
 
@@ -57,17 +58,14 @@ class Hero(Entity):
     current_quest = property(get_current_quest, set_current_quest)
     current_step = property(get_current_step, set_current_step)
 
-    # TODO
-    # def getNumQuest(self):
-    #     return self.numQuest
-
     # ##############
     # ## METHODS
     # ##############
 
-    # TODO : load_to load_from
+    def get_sex_label(self):
+        return "female" if self.sex else "male"
 
-    #load_from
+    sex_label = property(get_sex_label)
 
     def load_from_db(self):
         """ fetch data from database, if _recursive is True fetch each steps too """
@@ -75,7 +73,7 @@ class Hero(Entity):
 
         result = db.select_one(
             '''
-                SELECT lvl,weapon,armor,passive,sex,idUser,numQuest,numStep
+                SELECT lvl, weapon, armor, passive, sex, idUser, numQuest, numStep
                 FROM hero
                 WHERE nameOfTheHero = ?
             ''',
@@ -95,29 +93,45 @@ class Hero(Entity):
     def load_to_db(self):
         """ persist instance to database, if _recursive is True persist each steps too """
         db = Database()
-        if db.select_one("SELECT idHero FROM hero WHERE nameOfTheHero = ?",(self.name,)):
+        if db.select_one("SELECT idHero FROM hero WHERE nameOfTheHero = ?", (self.name,)):
             db.update(
                 '''
                     UPDATE hero
                     SET lvl = ?,weapon = ?, armor = ?, passive = ?, sex = ?, idUser = ?,numQuest = ?, numStep = ?
                     WHERE nameOfTheHero = ?
                 ''',
-                (self.lvl, self.weapon, self.armor, self.passive, 1 if self.sex else 0, self.user_id, self.current_quest,
-                 self.current_step, self.name)
+                (self.lvl,
+                 self.weapon,
+                 self.armor,
+                 self.passive,
+                 1 if self.m_sex else 0,
+                 self.user_id,
+                 self.current_quest,
+                 self.current_step,
+                 self.name)
             )
         else:
             db.add(
                 '''
-                    INSERT INTO hero(nameOfTheHero,lvl,weapon,armor,passive,sex,idUser,numQuest,numStep)
+                    INSERT INTO hero(nameOfTheHero, lvl, weapon, armor, passive, sex, idUser, numQuest, numStep)
                     VALUES(?,?,?,?,?,?,?,?,?)
-                ''',(self.name,self.lvl, self.weapon, self.armor, self.passive, self.sex, self.user_id, self.current_quest,self.current_step)
+                ''',
+                (self.name,
+                 self.lvl,
+                 self.weapon,
+                 self.armor,
+                 self.passive,
+                 1 if self.m_sex else 0,
+                 self.user_id,
+                 self.current_quest,
+                 self.current_step)
             )
 
     def delete(self):
         db = Database()
-        db.delete("DELETE FROM hero WHERE nameOfTheHero = ?",(self.name,)) #Delete the hero in the database
+        db.delete("DELETE FROM hero WHERE nameOfTheHero = ?", (self.name,))
 
-    def toString(self):
+    def to_string(self):
         return "Je m'appelle : " + self.m_name + " Je suis niveau : " + str(self.m_lvl) + " Je suis équipé avec : " + self.m_weapon + " J'ai : " + str(self.m_armor) + " d'armure"
 
     # ##############
@@ -126,12 +140,8 @@ class Hero(Entity):
 
     @staticmethod
     def check_hero_avaliable( _name):
-        """ Register new hero in database with couple(_name, _lvl, _weapon, _armor, _passive, _user_id, _sex, _quest_id, _step_num), return a object hero if add, None if doesnt """
+        """ Verify if a hero with _name already existe, return True if None, False il already exist """
         db = Database()
-        if not db.select_one('''SELECT nameOfTheHero FROM hero WHERE nameOfTheHero = ?''', (_name,)) :
+        if not db.select_one('''SELECT nameOfTheHero FROM hero WHERE nameOfTheHero = ?''', (_name,)):
             return True
         return False
-
-    # TODO : wrong place
-    # def getTheNameOfTheHero(self):
-    #     return self.name
