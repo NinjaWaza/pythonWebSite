@@ -20,13 +20,13 @@ CREATE TABLE hero (
   sex BOOLEAN DEFAULT FALSE,
   idUser INT NOT NULL,
   numQuest INT DEFAULT 1,
-  numStep INT DEFAULT 0,
+  numStep INT DEFAULT 1,
   FOREIGN KEY (idUser) REFERENCES user(idUser)
 );
 
 CREATE TABLE quest (
   questId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  nameOfTheQuest TEXT
+  questNumber INTEGER NOT NULL
 );
 
 CREATE TABLE step (

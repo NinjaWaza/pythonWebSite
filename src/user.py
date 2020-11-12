@@ -12,7 +12,7 @@ class User:
         self.m_heroes = list()
         self.m_selected_hero = None
 
-    #Getters
+    # Getters
 
     def get_id(self):
         return self.m_id
@@ -24,17 +24,15 @@ class User:
         return self.m_sex
 
     def get_heroes(self):
-        if self.m_heroes is None  or len(self.m_heroes) <= 0:
+        if self.m_heroes is None or len(self.m_heroes) <= 0:
             self.init_heroes()
-            if(len(self.m_heroes) >= 1):
-                self.m_selectedHero = self.heroes[0] #Set the selectedHero to the first of the list
 
         return self.m_heroes
 
     def get_selected_hero(self):
-        return self.m_selectedHero
+        return self.m_selected_hero
 
-    #Setters
+    # Setters
 
     def set_id(self):
         pass
@@ -49,15 +47,15 @@ class User:
         pass
 
     def set_selected_hero(self, _value):
-        self.m_selectedHero = _value
+        self.m_selected_hero = _value
 
-    #Properties
+    # Properties
 
     id = property(get_id, set_id)
     name = property(get_name, set_name)
     sex = property(get_sex, set_sex)
     heroes = property(get_heroes, set_heroes)
-    selected_hero = property(get_selected_hero,set_selected_hero)
+    selected_hero = property(get_selected_hero, set_selected_hero)
 
     # ##############
     # ## METHODS
@@ -65,13 +63,13 @@ class User:
 
     def init_heroes(self):
         db = Database()
-        result = db.select_all(
+        result = db.select_all( # _name, _lvl, _weapon, _armor, _passive
             '''
-                SELECT nameOfTheHero, lvl, weapon, armor, passive, sex, numQuest, numStep 
-                FROM hero INNER JOIN user ON user.idUser = hero.idUser 
-                WHERE username LIKE ?
+                SELECT nameOfTheHero, lvl, weapon, armor, passive
+                FROM hero
+                WHERE idUser = ?
             ''',
-            (self.m_name,)
+            (self.id,)
         )
 
         if result is not None:
@@ -82,10 +80,6 @@ class User:
                     row[2],   # weapon
                     row[3],   # armor
                     row[4],   # passive
-                    self.id,  # user_id
-                    row[5],   # sex
-                    row[6],   # numQuest
-                    row[7]    # numStep
                 ))
         else:
             self.m_heroes = None
@@ -98,13 +92,19 @@ class User:
         for hero in self.m_heroes:
             print(hero.toString())
 
+    def get_hero_by_name(self, hero_name):
+        for hero in self.heroes:
+            if (hero.name == hero_name):
+                return hero
+        return None
+
     # ##############
     # ## STATICS
     # ##############
 
     @staticmethod
     def register(_username, _password):
-        """ Register new user in database with couple(username, password), return True if add, False id doesnt """
+        """ Register new user in database with couple(username, password), return True if add, False if doesnt """
         db = Database()
         if db.select_one('''SELECT username FROM user WHERE username LIKE ?''', (_username, )) is not None:
             return "Username aleady taken"

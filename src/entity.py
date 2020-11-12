@@ -17,9 +17,7 @@ class Entity:
         self.m_mode = 0 #0 = Defend | 1 = Attack
         self.m_type_charactere = _type_charactere #0 = Monster | 1 = Hero
 
-    # TODO : getter / setter
-
-    #Getter
+    # Getter
 
     def get_name(self):
         return self.m_name
@@ -45,19 +43,19 @@ class Entity:
     def get_type_charactere(self):
         return self.m_type_charactere
 
-    #Setter
+    # Setter
 
     def set_name(self, value):
         self.m_name = value
 
     def set_lvl(self, value):
-        self.m_lvl= value
+        self.m_lvl = value
 
     def set_weapon(self, value):
-        self.m_weapon= value
+        self.m_weapon = value
 
     def set_armor(self, value):
-        self.m_weapon= value
+        self.m_weapon = value
 
     def set_passive(self, value):
         self.m_passive = value
@@ -71,9 +69,9 @@ class Entity:
     def set_type_charactere(self,value):
         self.m_type_charactere = value
 
-    #Properties
+    # Properties
 
-    name = property(get_name,set_name)
+    name = property(get_name, set_name)
     lvl = property(get_lvl, set_lvl)
     weapon = property(get_weapon, set_weapon)
     armor = property(get_armor, set_armor)
@@ -82,10 +80,11 @@ class Entity:
     mode = property(get_mode,set_mode)
     type_charactere = property(get_type_charactere, set_type_charactere)
 
+
     # ##############
     # ## METHODS
     # ##############
-
+    
     def give_damage(self):
         if(self.weapon):
             return random.randint(globals.weapons[self.weapon]["damages"] - globals.weapons[self.weapon]["range"], globals.weapons[self.weapon]["damages"] + globals.weapons[self.weapon]["range"])
