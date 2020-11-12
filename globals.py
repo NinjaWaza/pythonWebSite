@@ -16,6 +16,12 @@ user = None
 
 questbook = QuestBook()
 
+weapons = {"Hands" : {"name": "Hands","damages": 5,"range": 1},
+           "Stick" : {"name": "Stick","damages": 5,"range": 1},
+           "Sword" : {"name": "Sword","damages": 5,"range": 1},
+           "Axe" : {"name": "Axe","damages": 5,"range": 1},
+           }
+
 
 # step00 = QuestStep(
 #     0,
