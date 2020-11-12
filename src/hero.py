@@ -3,11 +3,11 @@ from src.entity import Entity
 
 
 class Hero(Entity):
-    def __init__(self,  _name, _lvl, _weapon, _armor, _passive, _user_id=None, _sex=None, _quest_id=None, _step_num=None, _who=1):
-        Entity.__init__(self,_name, _lvl, _weapon, _armor, _passive, _who)
+    def __init__(self,  _name, _lvl, _weapon, _armor,_passive, _type_charactere = 1, _user_id=None, _sex=None, _quest_num=1, _step_num=1):
+        Entity.__init__(self,_name, _lvl, _weapon, _armor, _passive, _type_charactere)
         self.m_user_id = _user_id
         self.m_sex = _sex
-        self.m_current_quest = _quest_id if _quest_id else None
+        self.m_current_quest = _quest_num if _quest_num else None
         self.m_current_step = _step_num if _step_num else None
 
     #Getter

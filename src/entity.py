@@ -4,7 +4,7 @@ from src.database import Database
 
 class Entity:
 
-    def __init__(self, _name, _lvl, _weapon, _armor, _passive, _who):
+    def __init__(self, _name, _lvl, _weapon, _armor, _passive, _type_charactere):
         self.m_name = _name
         self.m_lvl = _lvl
         self.m_weapon = _weapon
@@ -12,7 +12,7 @@ class Entity:
         self.m_passive = _passive
         self.m_life = 100
         self.m_mode = 0 #0 = Defend | 1 = Attack
-        self.m_who = _who
+        self.m_type_charactere = _type_charactere #0 = Monster | 1 = Hero
 
     # TODO : getter / setter
 
@@ -39,8 +39,8 @@ class Entity:
     def get_mode(self):
         return self.m_mode
 
-    def get_who(self):
-        return self.m_who
+    def get_type_charactere(self):
+        return self.m_type_charactere
 
     #Setter
 
@@ -65,8 +65,8 @@ class Entity:
     def set_mode(self,value):
         self.m_mode = value
     
-    def set_who(self,value):
-        self.m_who = value
+    def set_type_charactere(self,value):
+        self.m_type_charactere = value
 
     #Properties
 
@@ -77,7 +77,7 @@ class Entity:
     passive = property(get_passive, set_passive)
     life = property(get_life, set_life)
     mode = property(get_mode,set_mode)
-    who = property(get_who, set_who)
+    type_charactere = property(get_type_charactere, set_type_charactere)
 
     # ##############
     # ## METHODS
@@ -85,14 +85,15 @@ class Entity:
 
     def give_damage(self):
         if(self.weapon):
-            return random.sample(range(self.weapon["damages"] - self.weapon["range"], self.weapon["damages"] + self.weapon["range"]), 1)
+            weapon = globals.weapons[self.weapon]
+            return random.sample(range(weapon["damages"] - weapon["range"], weapon["damages"] + weapon["range"]), 1)[0]
 
 
     def take_damage(self, damage_to_take):
         if(self.mode):
             self.life -= damage_to_take
         else:
-            self.life -= damage_to_take - self.armor
+            self.life -= damage_to_take - (damage_to_take * self.armor / 100)
 
     # ##############
     # ## STATICS

@@ -21,12 +21,12 @@ def fight(_hero, _monster):
 
 	player_2.mode = 1
 	while player_1.life > 0 or player_2.life > 0:
-		player_1.mode = mode_choice(player_1)
+		player_1.mode = choice(player_1)
 		if player_1.mode:
-			take_damage(player_2, calcul_damage(player_2))
-		player_2.mode = mode_choice(player_2)
-		if player_2.mode and player_2.life > 0:
-			take_damage(player_1, calcul_damage(player_2))
+			player_2.take_damage(player_1.calcul_damage())
+		player_2.mode = choice(player_2)
+		if player_2.mode:
+			player_1.take_damage(player_2.calcul_damage())
 
 
 def calcul_damage(self): 
@@ -49,8 +49,9 @@ def calcul_damage(self):
 	)
 
 
-# def mode_choice(self):
-#	if self.tki:
-#		# Ask to player
-#	else:
-#		return randrange(0, 2) 
+def choice(fighter):
+	if fighter.type_charactere:
+		# Ask to player
+		return input("Quel est votre choix ?")
+	else:
+		return randrange(0, 2) 
