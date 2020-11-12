@@ -86,46 +86,15 @@ class Entity:
     # ## METHODS
     # ##############
 
-    #Delete for final program
-    global armes
-    armes = {"Hands": {"name": "Hands", "damages": 5, "range": 0},
-               "Stick": {"name": "Stick", "damages": 5, "range": 1},
-               "Sword": {"name": "Sword", "damages": 5, "range": 1},
-               "Axe": {"name": "Axe", "damages": 5, "range": 1},
-               }
-
-    # Delete for final program ---------- !
-
     def give_damage(self):
         if(self.weapon):
-            my_weapon = armes["Hands"]
-            print("l'arme choisie est : " + my_weapon["name"] + " cette arme fait : " + str(my_weapon["damages"]) + " de dégats en brut")
-            #weapon = globals.weapons[self.weapon]
-            return random.randint(my_weapon["damages"] - my_weapon["range"], my_weapon["damages"] + my_weapon["range"])
-
-#Uncomment for the final project
-    # def give_damage(self):
-    #     if(self.weapon):
-    #         weapon = globals.weapons[self.weapon]
-    #         return randint(weapon["damages"] - weapon["range"], weapon["damages"] + weapon["range"])
+            return random.randint(globals.weapons[self.weapon]["damages"] - globals.weapons[self.weapon]["range"], globals.weapons[self.weapon]["damages"] + globals.weapons[self.weapon]["range"])
 
     def take_damage(self, damage_to_take):
-        print("Je vais prendre des dégatts et mon mode est : ////" + str(self.mode) + " /////rappel : 0 = defend et 1 = attack")
-        print("Je vais prendre : " + str(damage_to_take) + " de dégats sauf si je suis en défense, donc que mon mode est 0")
         if(str(self.mode) == "1"):
-            print("ma vie devrais être : " + str(self.life - damage_to_take))
             self.life -= damage_to_take
         else:
-            print("Mais j'ai une armure donc je devrait prendre  : " + str(damage_to_take - (damage_to_take * self.armor / 100)) + " de dégats")
-            print("ma vie devrais être : " + str(self.life  - (damage_to_take - (damage_to_take * self.armor / 100))) + " après ce coup")
             self.life -= damage_to_take - (damage_to_take * self.armor / 100)
-
-    # Uncomment for the final project
-    # def take_damage(self, damage_to_take):
-    #     if(self.mode):
-    #         self.life -= damage_to_take
-    #     else:
-    #         self.life -= damage_to_take - (damage_to_take * self.armor / 100)
 
     # ##############
     # ## STATICS
