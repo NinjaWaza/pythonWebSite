@@ -204,6 +204,8 @@ def game_compute():
             globals.log.append(log)
             if not log:
                 return redirect(url_for("game_over_page"))
+            elif log == "end_game":
+                return redirect(url_for("end_game_page"))
 
     return redirect(url_for("game_page"))
 
@@ -217,7 +219,7 @@ def delete_hero():
         globals.pp.pprint(request.form)
         if "hero_selected" in request.form:
             result = globals.user.get_hero_by_name(request.form['hero_selected'])
-            if result :
+            if result:
                 if globals.user.selected_hero == result:
                     globals.user.selected_hero = None
                 for hero in globals.user.heroes:
@@ -234,5 +236,13 @@ def game_over_page():
         return redirect(url_for('home_page'))
 
     return render_template("game_over.html")
+
+
+@globals.app.route('/end_game')
+def end_game_page():
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    return render_template("end_game.html")
 
 # TODO : verifier si le sexe est ok

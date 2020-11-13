@@ -1,7 +1,7 @@
 import pprint
 
 from flask import Flask
-#from flask.json import dump
+# from flask.json import dump
 
 from src.questBook import QuestBook
 
@@ -22,13 +22,26 @@ user = None
 questbook = QuestBook()
 
 
+def next_step(_step, _quest=None):
+    global user
+
+    user.selected_hero.current_step = _step
+
+    if _quest:
+        user.selected_hero.current_quest = _quest
+
+    user.selected_hero.load_to_db()
+
+
 def generate_step_context():
     global user
     global questbook
     global pp
 
     tmp_quest = questbook.get_quest_by_number(user.selected_hero.current_quest)
-    tmp_step = questbook.get_quest_by_number(user.selected_hero.current_quest).get_a_step_by_number(user.selected_hero.current_step)
+
+    tmp_step = questbook.get_quest_by_number(user.selected_hero.current_quest) \
+        .get_a_step_by_number(user.selected_hero.current_step)
 
     # Load ASCII art picture
     step_display = "boooooooobies"
@@ -61,23 +74,61 @@ def generate_step_context():
 def quest1(_value):
     global user
     current_step = user.selected_hero.current_step
+
     if current_step == 1:
         user.selected_hero.sex = (_value == "female")
-        user.selected_hero.current_step = 2
-        user.selected_hero.load_to_db()
+        next_step(2)
 
         return f"Action (1, {current_step}) : user sex is now {_value}"
-    if current_step == 2:
-        if _value == "walk":
-            return False
-        if _value == "stay":
-            user.selected_hero.current_quest = 2
-            user.selected_hero.current_step = 1
-            user.selected_hero.load_to_db()
 
-        return f"Action (1, {current_step}) : hero now {_value}"
+    elif current_step == 2:
+        if _value == "stay":
+            next_step(1, 2)
+            return f"Action (1, {current_step}) : hero now {_value}"
+
+    return False
 
 
 def quest2(_value):
     global user
-    pass
+    current_step = user.selected_hero.current_step
+
+    if current_step == 1:
+        if _value == "stay":
+            next_step(2)
+            return f"Action (1, {current_step}) : hero now {_value}"
+
+    elif current_step == 2:
+        if _value == "no":
+            next_step(3)
+            return f"Action (1, {current_step}) : hero now {_value}"
+
+    elif current_step == 3:
+        if _value == "no":
+            next_step(4)
+            return f"Action (1, {current_step}) : hero now {_value}"
+
+    elif current_step == 4:
+        if _value == "yes":
+            next_step(1, 3)
+            return f"Action (1, {current_step}) : hero now {_value}"
+
+    return False
+
+
+def quest3(_value):
+    global user
+    current_step = user.selected_hero.current_step
+
+    if current_step == 1:
+        if _value == "start":
+            next_step(2)
+            return f"Action (1, {current_step}) : hero now {_value}"
+
+    elif current_step == 2:
+        # if _value == "garden":
+        #     next_step(1, 4)
+        #     return f"Action (1, {current_step}) : hero now {_value}"
+        return "end_game"
+
+    return False

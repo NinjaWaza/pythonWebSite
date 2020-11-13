@@ -12,7 +12,7 @@ app.cli.add_command(Database.init_db_command)
 
 # ###############################
 
-print('######## ->test')
+# print('######## ->test')
 
 # class Test:
 #     def __init__(self):
