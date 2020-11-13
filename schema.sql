@@ -16,7 +16,7 @@ CREATE TABLE hero (
   lvl INT DEFAULT 1,
   weapon TEXT DEFAULT "Hands",
   armor INT DEFAULT 0,
-  passive TEXT DEFAULT "None",
+  passive TEXT DEFAULT "Nothing",
   sex BOOLEAN DEFAULT FALSE,
   idUser INT NOT NULL,
   numQuest INT DEFAULT 1,
