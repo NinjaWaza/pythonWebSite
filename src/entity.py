@@ -86,14 +86,20 @@ class Entity:
     # ##############
     
     def give_damage(self):
+        calcul_passive = 1
+        if(str(self.passive) == "Damaging"):
+            calcul_passive = 1.05
         if(self.weapon):
-            return random.randint(globals.weapons[self.weapon]["damages"] - globals.weapons[self.weapon]["range"], globals.weapons[self.weapon]["damages"] + globals.weapons[self.weapon]["range"])
+            return random.randint(globals.weapons[self.weapon]["damages"] - globals.weapons[self.weapon]["range"], globals.weapons[self.weapon]["damages"] + globals.weapons[self.weapon]["range"]) * calcul_passive
 
     def take_damage(self, damage_to_take):
+        calcul_passive = 1
+        if (str(self.passive) == "Healing"):
+            calcul_passive = 0.95
         if(str(self.mode) == "1"):
-            self.life -= damage_to_take
+            self.life -= damage_to_take * calcul_passive
         else:
-            self.life -= damage_to_take - (damage_to_take * self.armor / 100)
+            self.life -= (damage_to_take - (damage_to_take * self.armor / 100)) * calcul_passive
 
     # ##############
     # ## STATICS
