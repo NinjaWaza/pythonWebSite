@@ -4,7 +4,7 @@ from src.entity import Entity
 
 class Hero(Entity):
     def __init__(self,  _name, _lvl, _weapon, _armor, _passive, _user_id=None, _sex=None, _quest_num=None, _step_num=None):
-        Entity.__init__(self, _name, _lvl, _weapon, _armor, _passive)
+        Entity.__init__(self, _name, _lvl, _weapon, _armor, _passive, None)
         self.m_user_id = _user_id
         self.m_sex = _sex
         self.m_current_quest = _quest_num
@@ -62,12 +62,13 @@ class Hero(Entity):
     # ##############
 
     def get_sex_label(self):
+        """ Translate bool value into sex type """
         return "female" if self.sex else "male"
 
     sex_label = property(get_sex_label)
 
     def load_from_db(self):
-        """ fetch data from database, if _recursive is True fetch each steps too """
+        """ Fetch data from database, if _recursive is True fetch each steps too """
         db = Database()
 
         result = db.select_one(
@@ -90,7 +91,7 @@ class Hero(Entity):
             self.current_step = result[7]
 
     def load_to_db(self):
-        """ persist instance to database, if _recursive is True persist each steps too """
+        """ Persist instance to database, if _recursive is True persist each steps too """
         db = Database()
         if db.select_one("SELECT idHero FROM hero WHERE nameOfTheHero = ?", (self.name,)):
             db.update(
@@ -127,19 +128,24 @@ class Hero(Entity):
             )
 
     def delete(self):
+        """ Delete table tuple corresponding to current instance  """
         db = Database()
         db.delete("DELETE FROM hero WHERE nameOfTheHero = ?", (self.name,))
 
     def to_string(self):
-        return "Je m'appelle : " + self.m_name + " Je suis niveau : " + str(self.m_lvl) + " Je suis équipé avec : " + self.m_weapon + " J'ai : " + str(self.m_armor) + " d'armure"
+        """ Return debug string of Hero instance """
+        return f"Je m'appelle : {self.m_name}" \
+               f", je suis niveau : {str(self.m_lvl)}" \
+               f", je suis équipé avec : {self.m_weapon}" \
+               f", j'ai : {str(self.m_armor)} d'armure"
 
     # ##############
     # ## STATICS
     # ##############
 
     @staticmethod
-    def check_hero_avaliable( _name):
-        """ Verify if a hero with _name already existe, return True if None, False il already exist """
+    def check_hero_available(_name):
+        """ Verify if a hero with _name already exist, return True if None, False il already exist """
         db = Database()
         if not db.select_one('''SELECT nameOfTheHero FROM hero WHERE nameOfTheHero = ?''', (_name,)):
             return True

@@ -1,7 +1,7 @@
-import bcrypt
 from src.hero import Hero
-
 from src.database import Database
+
+import bcrypt
 
 
 class User:
@@ -63,7 +63,7 @@ class User:
 
     def init_heroes(self):
         db = Database()
-        result = db.select_all( # _name, _lvl, _weapon, _armor, _passive
+        result = db.select_all(  # _name, _lvl, _weapon, _armor, _passive
             '''
                 SELECT nameOfTheHero, lvl, weapon, armor, passive
                 FROM hero
@@ -88,14 +88,15 @@ class User:
         self.m_heroes.append(_value)
 
     def print_heroes(self):
-        """This function is here for the Log/Debug"""
+        """ Print debug string of Hero instance """
         for hero in self.m_heroes:
             print(hero.toString())
 
-    def get_hero_by_name(self, hero_name):
+    def get_hero_by_name(self, _value):
         for hero in self.heroes:
-            if (hero.name == hero_name):
+            if hero.name == _value:
                 return hero
+
         return None
 
     # ##############
@@ -116,14 +117,12 @@ class User:
     @staticmethod
     def login(_username, _password):
         """ Login with a check of the (username, password) couple in Database """
-
-        print("start login")
         db = Database()
         result = db.select_one('''SELECT idUser, password FROM user WHERE username LIKE ?''', (_username, ))
 
         if result is not None:
             if result[1] != "":
-                if bcrypt.checkpw(_password.encode('utf-8'), result[1].encode('utf-8')):  # Check if passwords are the same
+                if bcrypt.checkpw(_password.encode('utf-8'), result[1].encode('utf-8')):
                     return User(result[0], _username)
                 else:
                     return "Error : Invalid Password"
@@ -140,7 +139,7 @@ class User:
 
         if result is not None:
             if result[1] != "":
-                if bcrypt.checkpw(_password.encode('utf-8'), result[1].encode('utf-8')):  # Check if passwords are the same
+                if bcrypt.checkpw(_password.encode('utf-8'), result[1].encode('utf-8')):
                     for hero in user.heroes:
                         hero.delete()
                     db.delete("DELETE FROM user WHERE username = ?", (_username,))

@@ -9,7 +9,7 @@ class Quest:
         self.m_name = _name
         self.m_steps = list()
 
-    #Getters
+    # Getters
 
     def get_id(self):
         return self.m_id
@@ -32,7 +32,7 @@ class Quest:
 
         return self.m_name
 
-    #Setters
+    # Setters
 
     def set_id(self, _value):
         pass
@@ -57,19 +57,23 @@ class Quest:
     # ## METHODS
     # ##############
 
-    def get_a_step_by_number(self, number_of_the_step):
+    def get_a_step_by_number(self, _value):
+        """ Return the m_steps step needed according of the _value, None if no occurrence """
         for step in self.m_steps:
-            if step.number == number_of_the_step:
+            if step.number == _value:
                 return step
 
+        return None
+
     def get_last_step_id(self):
+        """ Return the id of the last quest step """
         return len(self.m_steps) - 1
 
     def add_step(self, _value):
         self.m_steps.append(_value)
 
     def to_string(self):
-        """ This function is here for the Log/Debug : Print all the steps of a quest | Use only for debug during development """
+        """ Return debug string of Hero instance """
         result = ""
         for step in self.m_steps:
             result += step.to_string()
@@ -78,7 +82,7 @@ class Quest:
         return result
 
     def load_from_db(self, _recursive=True):
-        """ fetch data from database, if _recursive is True fetch each steps too """
+        """ Fetch data from database, if _recursive is True fetch each steps too """
         db = Database()
 
         result = db.select_one(
@@ -114,7 +118,7 @@ class Quest:
                 step.load_from_db()
 
     def load_to_db(self, _recursive=True):
-        """ persist instance to database, if _recursive is True persist each steps too """
+        """ Persist instance to database, if _recursive is True persist each steps too """
         db = Database
         db.update(
             '''

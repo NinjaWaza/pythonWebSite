@@ -13,14 +13,32 @@ class Database:
         self.m_db = sqlite3.connect("database.db")
         self.m_db.row_factory = sqlite3.Row
 
+    # Getter
+
     def get_db(self):
         return self.db
+
+    # Setter
 
     def set_db(self, _value):
         pass
 
+    # Destructor
+
+    def close_db(self):
+        if self.m_db is not None:
+            self.m_db.close()
+
+    # Properties
+
+    db = property(get_db, set_db, close_db)
+
+    # ##############
+    # ## METHODS
+    # ##############
+
     def select_one(self, _query, _params=None):
-        """ Return sqlit3 row with query result or 'Error' is something goes wrong """
+        """ Return a sqlite3 row with query result or 'Error' is something goes wrong """
         try:
             cursor = self.m_db.cursor()
 
@@ -29,17 +47,11 @@ class Database:
             else:
                 return cursor.execute(_query).fetchone()
 
-            print("try done")
         except sqlite3.Error as error:
-            print('SQLite error: %s' % (' '.join(error.args)))
-            print("Exception class is: ", error.__class__)
-            print('SQLite traceback: ')
-            exc_type, exc_value, exc_tb = sys.exc_info()
-            print(traceback.format_exception(exc_type, exc_value, exc_tb))
-            return None
+            return Database.compute_sqlite3_error(error)
 
     def select_all(self, _query, _params=None):
-        """ Return array of sqlit3 row with query result or 'Error' is something goes wrong """
+        """ Return array of sqlite3 row with query result or 'Error' is something goes wrong """
         try:
             cursor = self.m_db.cursor()
 
@@ -48,40 +60,37 @@ class Database:
             else:
                 return cursor.execute(_query).fetchall()
         except sqlite3.Error as error:
-            print('SQLite error: %s' % (' '.join(error.args)))
-            print("Exception class is: ", error.__class__)
-            print('SQLite traceback: ')
-            exc_type, exc_value, exc_tb = sys.exc_info()
-            print(traceback.format_exception(exc_type, exc_value, exc_tb))
-            return "Error"
+            return Database.compute_sqlite3_error(error)
 
     def update(self, _query, _params=None):
-        """ Return array of sqlit3 row with query result or 'Error' is something goes wrong """
+        """ Handle update query on Database, return "Error" if something goes wrong """
         try:
             cursor = self.m_db.cursor()
             cursor.execute(_query, _params)
             self.m_db.commit()
         except sqlite3.Error as error:
-            print('SQLite error: %s' % (' '.join(error.args)))
-            print("Exception class is: ", error.__class__)
-            print('SQLite traceback: ')
-            exc_type, exc_value, exc_tb = sys.exc_info()
-            print(traceback.format_exception(exc_type, exc_value, exc_tb))
-            return "Error"
+            return Database.compute_sqlite3_error(error)
 
     def delete(self, _query, _params=None):
-        """ Return array of sqlit3 row with query result or 'Error' is something goes wrong """
+        """ Handle delete query on Database, return "Error" if something goes wrong """
         self.update(_query, _params)
 
     def add(self, _query, _params=None):
-        """ Return array of sqlit3 row with query result or 'Error' is something goes wrong """
+        """ Handle specific add update query on Database """
         self.update(_query, _params)
 
-    def close_db(self):
-        if self.m_db is not None:
-            self.m_db.close()
+    # ##############
+    # ## STATICS
+    # ##############
 
-    db = property(get_db, set_db, close_db)
+    @staticmethod
+    def compute_sqlite3_error(_error):
+        print('SQLite error: %s' % (' '.join(_error.args)))
+        print("Exception class is: ", _error.__class__)
+        print('SQLite traceback: ')
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        print(traceback.format_exception(exc_type, exc_value, exc_tb))
+        return "Error"
 
     @staticmethod
     @click.command(name="init-db")

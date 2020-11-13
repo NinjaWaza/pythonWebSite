@@ -1,32 +1,41 @@
-import pprint
-
-from src.database import Database
 from src.hero import Hero
 from src.user import User
-from src.monster import Monster
+# from src.monster import Monster
 
 import globals
-from flask import Flask, render_template, request, redirect, url_for
-from markupsafe import escape
+from flask import render_template, request, redirect, url_for
+# from markupsafe import escape
 
+
+# ##########################
+# ## ERROR CODE HANDLING
+# ##########################
 
 @globals.app.errorhandler(400)
 def error_page_400(_event):
+    """ Handle code status 400 with 400.html page """
     return render_template('400.html'), 400
 
 
 @globals.app.errorhandler(404)
 def error_page_404(_event):
+    """ Handle code status 404 with 404.html page """
     return render_template('404.html'), 404
 
 
 @globals.app.errorhandler(500)
 def error_page_500(_event):
+    """ Handle code status 500 with 500.html page """
     return render_template('500.html'), 500
+
+# ##########################
+# ## VIEW HANDLING
+# ##########################
 
 
 @globals.app.route('/', methods=['POST', 'GET'])
 def home_page():
+    """ Handle GET / and POST / request, Home page function """
     if globals.user is not None:
         return redirect(url_for('user_page'))
 
@@ -44,6 +53,7 @@ def home_page():
 
 @globals.app.route('/register', methods=['POST', 'GET'])
 def register_page():
+    """ Handle GET /register and POST /register request, Register page function """
     if globals.user is not None:
         return redirect(url_for('user_page'))
 
@@ -71,6 +81,7 @@ def register_page():
 
 @globals.app.route('/login', methods=['POST', 'GET'])
 def login_page():
+    """ Handle GET /login and POST /login request, Login page function """
     if globals.user is not None:
         return redirect(url_for('user_page'))
 
@@ -92,8 +103,75 @@ def login_page():
     )
 
 
+@globals.app.route('/user', methods=['POST', 'GET'])
+def user_page():
+    """ Handle POST /user and GET /user request, User profile page function """
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    if request.method == 'POST':
+        if "hero_selected" in request.form:
+            for hero in globals.user.heroes:
+                if hero.name == request.form['hero_selected']:
+                    globals.user.selected_hero = hero
+
+        if "hero_name" in request.form:
+            globals.user.selected_hero(globals.user.get_hero_by_name(request.form['hero_name']))
+
+    return render_template(
+        'user.html',
+        user=globals.user,
+        heroes=globals.user.heroes
+    )
+
+
+@globals.app.route('/game', methods=['POST', 'GET'])
+def game_page():
+    """ Handle POST /game and GET /game request, Game display page function """
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    if globals.user.selected_hero is None:
+        return redirect(url_for('home_page'))
+
+    step_context = globals.generate_step_context()
+
+    return render_template(
+        'game.html',
+        user=globals.user,
+        step_display=step_context['step_display'],
+        step_context_title=step_context['step_context_title'],
+        step_context_text=step_context['step_context_text'],
+        step_options=step_context['step_context_options'],
+        log=globals.log[-1] if globals.log else None
+    )
+
+
+@globals.app.route('/game_over')
+def game_over_page():
+    """ Handle GET /game_over, game over page function """
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    return render_template("game_over.html")
+
+
+@globals.app.route('/end_game')
+def end_game_page():
+    """ Handle GET /end_game, end of the game page function """
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    return render_template("end_game.html")
+
+# ##########################
+# ## METHOD HANDLING
+# ##########################
+
+
 @globals.app.route('/logout')
 def logout_page():
+    """ Handle GET /logout request, Logout function """
     if globals.user is None:
         return redirect(url_for('home_page'))
     else:
@@ -104,24 +182,49 @@ def logout_page():
 
 @globals.app.route('/deleteAccount', methods=['POST'])
 def delete_account():
+    """ Handle POST /deleteAccount request, User account deletion function """
     if globals.user is None:
         return redirect(url_for('home_page'))
 
     if request.method == 'POST':
-        if "password" in request.form :
-            User.delete(globals.user.name, request.form['password'],globals.user)
+        if "password" in request.form:
+            User.delete(globals.user.name, request.form['password'], globals.user)
             globals.user = None
+
             return redirect(url_for("home_page"))
+
     return redirect(url_for("user_page"))
+
+
+@globals.app.route('/delete_hero', methods=['POST'])
+def delete_hero():
+    """ Handle POST /delete_hero, hero deletion function """
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    if request.method == 'POST':
+        if "hero_selected" in request.form:
+            result = globals.user.get_hero_by_name(request.form['hero_selected'])
+            if result:
+                if globals.user.selected_hero == result:
+                    globals.user.selected_hero = None
+
+                for hero in globals.user.heroes:
+                    if hero.name == request.form['hero_selected']:
+                        hero.delete()
+                        globals.user.heroes.remove(hero)
+
+    return redirect(url_for('user_page'))
 
 
 @globals.app.route('/create_hero', methods=['POST'])
 def create_hero():
+    """ Handle POST /create_hero request, hero creation function """
     if globals.user is None:
         return redirect(url_for('home_page'))
 
     if request.method == 'POST':
-        if Hero.check_hero_avaliable(request.form['name_of_the_hero']):
+        if Hero.check_hero_available(request.form['name_of_the_hero']):
             globals.pp.pprint(f"sex input : {request.form}")
             tmp_hero = Hero(
                 request.form['name_of_the_hero'],  # name
@@ -140,54 +243,9 @@ def create_hero():
     return redirect(url_for("user_page"))
 
 
-@globals.app.route('/user', methods=['POST', 'GET'])
-def user_page():
-    if globals.user is None:
-        return redirect(url_for('home_page'))
-
-    if request.method == 'POST':
-        if "hero_selected" in request.form:
-            for hero in globals.user.heroes:
-                if hero.name == request.form['hero_selected']:
-                    globals.user.selected_hero = hero
-        if "hero_name" in request.form:
-            globals.user.selected_hero(globals.user.get_hero_by_name(request.form['hero_name']))
-
-    return render_template(
-        'user.html',
-        user=globals.user,
-        heroes=globals.user.heroes
-    )
-
-
-@globals.app.route('/game', methods=['POST', 'GET'])
-def game_page():
-    """ This route handle game interface """
-    if globals.user is None:
-        return redirect(url_for('home_page'))
-
-    if globals.user.selected_hero is None:
-        return redirect(url_for('home_page'))
-
-    #globals.log = "Nothings"
-    user_choice = None
-
-    step_context = globals.generate_step_context()
-
-    return render_template(
-        'game.html',
-        user=globals.user,
-        step_display=step_context['step_display'],
-        step_context_title=step_context['step_context_title'],
-        step_context_text=step_context['step_context_text'],
-        step_options=step_context['step_context_options'],
-        log=globals.log[-1]
-    )
-
-
 @globals.app.route('/game_compute', methods=['POST'])
 def game_compute():
-    """ This route handle game interaction """
+    """ Handle POST /game_compute, Game computing function """
     if globals.user is None:
         return redirect(url_for('home_page'))
 
@@ -204,45 +262,8 @@ def game_compute():
             globals.log.append(log)
             if not log:
                 return redirect(url_for("game_over_page"))
+
             elif log == "end_game":
                 return redirect(url_for("end_game_page"))
 
     return redirect(url_for("game_page"))
-
-
-@globals.app.route('/delete_hero', methods=['POST'])
-def delete_hero():
-    if globals.user is None:
-        return redirect(url_for('home_page'))
-
-    if request.method == 'POST':
-        globals.pp.pprint(request.form)
-        if "hero_selected" in request.form:
-            result = globals.user.get_hero_by_name(request.form['hero_selected'])
-            if result:
-                if globals.user.selected_hero == result:
-                    globals.user.selected_hero = None
-                for hero in globals.user.heroes:
-                    if hero.name == request.form['hero_selected']:
-                        hero.delete()
-                        globals.user.heroes.remove(hero)
-
-    return redirect(url_for('user_page'))
-
-
-@globals.app.route('/game_over')
-def game_over_page():
-    if globals.user is None:
-        return redirect(url_for('home_page'))
-
-    return render_template("game_over.html")
-
-
-@globals.app.route('/end_game')
-def end_game_page():
-    if globals.user is None:
-        return redirect(url_for('home_page'))
-
-    return render_template("end_game.html")
-
-# TODO : verifier si le sexe est ok

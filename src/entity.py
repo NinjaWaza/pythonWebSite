@@ -1,21 +1,18 @@
 import random
-#from src.database import Database
-
-#Delete --------------
-from database import Database
+from src.database import Database
 
 
 class Entity:
-
+    # TODO veify _type_charactere
     def __init__(self, _name, _lvl, _weapon, _armor, _passive, _type_charactere):
         self.m_name = _name
         self.m_lvl = _lvl
         self.m_weapon = _weapon
         self.m_armor = _armor
         self.m_passive = _passive
-        self.m_life = 15 #Change for the final program
-        self.m_mode = 0 #0 = Defend | 1 = Attack
-        self.m_type_charactere = _type_charactere #0 = Monster | 1 = Hero
+        self.m_life = 15  # Change for the final program
+        self.m_mode = 0  # 0 = Defend | 1 = Attack
+        self.m_type_charactere = _type_charactere  # 0 = Monster | 1 = Hero  TODO : useful ?
 
     # Getter
 
@@ -60,13 +57,13 @@ class Entity:
     def set_passive(self, value):
         self.m_passive = value
 
-    def set_life(self,value):
+    def set_life(self, value):
         self.m_life = value
     
-    def set_mode(self,value):
+    def set_mode(self, value):
         self.m_mode = value
     
-    def set_type_charactere(self,value):
+    def set_type_charactere(self, value):
         self.m_type_charactere = value
 
     # Properties
@@ -80,23 +77,24 @@ class Entity:
     mode = property(get_mode,set_mode)
     type_charactere = property(get_type_charactere, set_type_charactere)
 
-
     # ##############
     # ## METHODS
     # ##############
-    
+
+    # TODO : ?
     def give_damage(self):
         calcul_passive = 1
-        if(str(self.passive) == "Damaging"):
+        if str(self.passive) == "Damaging":
             calcul_passive = 1.05
-        if(self.weapon):
+        if self.weapon:
             return random.randint(globals.weapons[self.weapon]["damages"] - globals.weapons[self.weapon]["range"], globals.weapons[self.weapon]["damages"] + globals.weapons[self.weapon]["range"]) * calcul_passive
 
+    # TODO : ?
     def take_damage(self, damage_to_take):
         calcul_passive = 1
-        if (str(self.passive) == "Healing"):
+        if str(self.passive) == "Healing":
             calcul_passive = 0.95
-        if(str(self.mode) == "1"):
+        if str(self.mode) == "1":
             self.life -= damage_to_take * calcul_passive
         else:
             self.life -= (damage_to_take - (damage_to_take * self.armor / 100)) * calcul_passive

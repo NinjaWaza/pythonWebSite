@@ -2,7 +2,6 @@ import pprint
 
 from flask import Flask
 # from flask.json import dump
-
 from src.questBook import QuestBook
 
 """ Flask app global instance """
@@ -21,14 +20,16 @@ user = None
 """ Questbook global instance """
 questbook = QuestBook()
 
-weapons = {"Hands" : {"name": "Hands","damages": 5,"range": 5},
-           "Stick" : {"name": "Stick","damages": 7,"range": 3},
-           "Sword" : {"name": "Sword","damages": 10,"range": 4},
-           "Axe" : {"name": "Axe","damages": 8,"range": 8},
+# Dummy data
+weapons = {"Hands": {"name": "Hands", "damages": 5, "range": 5},
+           "Stick": {"name": "Stick", "damages": 7, "range": 3},
+           "Sword": {"name": "Sword", "damages": 10, "range": 4},
+           "Axe": {"name": "Axe", "damages": 8, "range": 8},
            }
 
 
 def next_step(_step, _quest=None):
+    """ Change current global user quest/step """
     global user
 
     user.selected_hero.current_step = _step
@@ -40,6 +41,7 @@ def next_step(_step, _quest=None):
 
 
 def generate_step_context():
+    """ Handle graphical part of quest generation """
     global user
     global questbook
     global pp
@@ -78,6 +80,7 @@ def generate_step_context():
 
 
 def quest1(_value):
+    """ Quest 1 steps computing according to user choice """
     global user
     current_step = user.selected_hero.current_step
 
@@ -96,6 +99,7 @@ def quest1(_value):
 
 
 def quest2(_value):
+    """ Quest 2 steps computing according to user choice """
     global user
     current_step = user.selected_hero.current_step
 
@@ -123,6 +127,7 @@ def quest2(_value):
 
 
 def quest3(_value):
+    """ Quest 3 steps computing according to user choice """
     global user
     current_step = user.selected_hero.current_step
 
