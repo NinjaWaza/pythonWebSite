@@ -3,9 +3,10 @@ from src.step import Step
 
 
 class Quest:
-    def __init__(self, _id, _name=None):
+    def __init__(self, _id, _number=None, _name=None):
         self.m_id = _id
-        self.m_name = _name if _name else None
+        self.m_number = _number
+        self.m_name = _name
         self.m_steps = list()
 
     #Getters
@@ -13,11 +14,11 @@ class Quest:
     def get_id(self):
         return self.m_id
 
-    def get_name(self):
-        if self.m_name is None:
+    def get_number(self):
+        if self.m_number is None:
             self.load_from_db()
 
-        return self.m_name
+        return self.m_number
 
     def get_steps(self):
         if not self.m_steps:
@@ -25,22 +26,32 @@ class Quest:
 
         return self.m_steps
 
+    def get_name(self):
+        if self.m_name is None:
+            self.load_from_db()
+
+        return self.m_name
+
     #Setters
 
     def set_id(self, _value):
         pass
 
-    def set_name(self, _value):
-        self.m_name = _value
+    def set_number(self, _value):
+        self.m_number = _value
 
     def set_steps(self, _value):
         pass
 
-    #Properties
+    def set_name(self, _value):
+        self.m_name = _value
+
+    # Properties
 
     id = property(get_id, set_id)
+    number = property(get_number, set_number)
     name = property(get_name, set_name)
-    step = property(get_steps, set_steps)
+    steps = property(get_steps, set_steps)
 
     # ##############
     # ## METHODS
@@ -48,7 +59,7 @@ class Quest:
 
     def get_a_step_by_number(self, number_of_the_step):
         for step in self.m_steps:
-            if(step.number == number_of_the_step):
+            if step.number == number_of_the_step:
                 return step
 
     def get_last_step_id(self):
@@ -69,25 +80,29 @@ class Quest:
     def load_from_db(self, _recursive=True):
         """ fetch data from database, if _recursive is True fetch each steps too """
         db = Database()
-        if self.m_name is None:
-            self.m_name = db.select_one(
-                '''
-                    SELECT nameOfTheQuest
-                    FROM quest
-                    WHERE questId = ?
-                ''',
-                (self.m_id, )
-            )[0]
+
+        result = db.select_one(
+            '''
+                SELECT questNumber, questName
+                FROM quest
+                WHERE questId = ?
+            ''',
+            (self.m_id, )
+        )
+        if result:
+            self.m_number = result[0]
+            self.m_name = result[1]
 
         result = db.select_all(
             '''
                 SELECT questId, stepNumber
                 FROM step
                 WHERE step.questId = ?
+                ORDER BY stepNumber
             ''',
             (self.m_id, )
         )
-        if result is not None:
+        if result:
             for row in result:
                 self.add_step(Step(
                     row[0],  # questId
@@ -104,7 +119,7 @@ class Quest:
         db.update(
             '''
                 UPDATE quest
-                SET nameOfTheQuest = ?
+                SET questNumber = ?
                 WHERE questId = ?
             ''',
             (self.m_name if self.m_name else "", self.m_id)
@@ -117,24 +132,3 @@ class Quest:
     # ##############
     # ## STATICS
     # ##############
-
-    # TODO : refactor if useful
-    # @staticmethod
-    # def createATotallyNewQuest(nameOfTheQuest, steps=None):
-    #     # We have to get the last step id for this specific quest
-    #     myDatabaseAccess = get_db()  # Get the database in a variable
-    #     resultMaxQuestIdRequest = myDatabaseAccess.execute(
-    #         "SELECT MAX(questId) FROM quest").fetchone()  # Get the maximum questId
-    #     theMaxQuestId = resultMaxQuestIdRequest[0] + 1  # Add +1 at max questId
-    #     infosQuest = [theMaxQuestId, nameOfTheQuest]
-    #     resultatOfTheInsertRequest = myDatabaseAccess.execute("INSERT INTO quest(questId,nameOfTheQuest) VALUES(?,?)",
-    #                                                           infosQuest)  # Insert into the database the quest
-    #     resultatOfTheInsertRequest = myDatabaseAccess.commit()  # Save the change in the database.db file
-    #     theNewQuest = Quest(nameOfTheQuest, steps=None)  # Create a quest object
-    #     return theNewQuest  # Return this quest object
-
-
-    # TODO : refactor if useful
-    # def addStep(self, aStepToAdd):
-    #   self.steps.append(aStepToAdd)  # That will add the step to the end of the list
-

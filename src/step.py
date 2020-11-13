@@ -2,10 +2,11 @@ from src.database import Database
 
 
 class Step:
-    def __init__(self, _quest_id, _number, _text=None):
+    def __init__(self, _quest_id, _number, _text=None, _options=None):
         self.m_quest_id = _quest_id
         self.m_number = _number
-        self.m_text = _text if _text else None
+        self.m_text = _text
+        self.m_options = _options
 
     #Getters
 
@@ -21,6 +22,12 @@ class Step:
 
         return self.m_text
 
+    def get_options(self):
+        if self.m_options is None:
+            self.load_from_db()
+
+        return self.m_options
+
     #Setters
 
     def set_quest_id(self, _value):
@@ -32,11 +39,15 @@ class Step:
     def set_text(self, _value):
         self.m_text = _value
 
+    def set_options(self, _value):
+        self.m_options = _value
+
     #Properties
 
     quest_id = property(get_quest_id, set_quest_id)
     number = property(get_number, set_number)
     text = property(get_text, set_text)
+    options = property(get_options, set_options)
 
     # ##############
     # ## METHODS
@@ -47,12 +58,15 @@ class Step:
         db = Database()
         result = db.select_one(
             '''
-                SELECT step.textOfTheStep 
+                SELECT textOfTheStep, stepOptions
                 FROM step
-                WHERE step.questId = ? AND step.stepNumber = ?
+                WHERE questId = ? AND stepNumber = ?
             ''',
             (self.quest_id, self.m_number)
         )
+        if result:
+            self.text = result[0]
+            self.options = result[1]
 
         return result
 
