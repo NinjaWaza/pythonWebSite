@@ -1,9 +1,13 @@
-from src.hero import Hero
-from src.user import User
-# from src.monster import Monster
+from src.classes.hero import Hero
+from src.classes.user import User
+import src.computing_quest
+from src.classes.monster import Monster
+# TODO : remove
 
 import globals
 from flask import render_template, request, redirect, url_for
+
+
 # from markupsafe import escape
 
 
@@ -14,25 +18,27 @@ from flask import render_template, request, redirect, url_for
 @globals.app.errorhandler(400)
 def error_page_400(_event):
     """ Handle code status 400 with 400.html page """
-    return render_template('400.html'), 400
+    return render_template('400.html', user=globals.user), 400
 
 
 @globals.app.errorhandler(404)
 def error_page_404(_event):
     """ Handle code status 404 with 404.html page """
-    return render_template('404.html'), 404
+    return render_template('404.html', user=globals.user), 404
 
 
 @globals.app.errorhandler(500)
 def error_page_500(_event):
     """ Handle code status 500 with 500.html page """
-    return render_template('500.html'), 500
+    return render_template('500.html', user=globals.user), 500
+
 
 # ##########################
 # ## VIEW HANDLING
 # ##########################
 
 
+# TODO : favicone ? Style.css menu
 @globals.app.route('/', methods=['POST', 'GET'])
 def home_page():
     """ Handle GET / and POST / request, Home page function """
@@ -115,19 +121,17 @@ def user_page():
                 if hero.name == request.form['hero_selected']:
                     globals.user.selected_hero = hero
 
-        if "hero_name" in request.form:
-            globals.user.selected_hero(globals.user.get_hero_by_name(request.form['hero_name']))
-
     return render_template(
         'user.html',
         user=globals.user,
-        heroes=globals.user.heroes
+        heroes=globals.user.heroes,
+        questbook=globals.questbook
     )
 
 
-@globals.app.route('/game', methods=['POST', 'GET'])
-def game_page():
-    """ Handle POST /game and GET /game request, Game display page function """
+@globals.app.route('/game', methods=['GET'])
+def game_storytelling_page():
+    """ Handle GET /game request, Game display page function """
     if globals.user is None:
         return redirect(url_for('home_page'))
 
@@ -137,13 +141,39 @@ def game_page():
     step_context = globals.generate_step_context()
 
     return render_template(
-        'game.html',
+        'game_storytelling.html',
         user=globals.user,
         step_display=step_context['step_display'],
         step_context_title=step_context['step_context_title'],
         step_context_text=step_context['step_context_text'],
         step_options=step_context['step_context_options'],
-        log=globals.log[-1] if globals.log else None
+        logs=globals.logs
+        # log=globals.log[-1] if globals.log else None
+    )
+
+
+# TODO : passer en /game/ ?
+@globals.app.route('/fight', methods=['GET'])
+def game_fight_page():
+    """ Handle GET /fight request, Game fight display page function """
+    if globals.user is None:
+        return redirect(url_for('home_page'))
+
+    if globals.user.selected_hero is None:
+        return redirect(url_for('home_page'))
+
+    fight_context = globals.generate_fight_context()
+
+    return render_template(
+        'game_fight.html',
+        user=globals.user,
+        fight_display=fight_context['fight_display'],
+        fight_context_title=fight_context['fight_context_title'],
+        fight_context_text=fight_context['fight_context_text'],
+        fight_context_options=fight_context['fight_context_options'],
+        fight_state=globals.fight_state,
+        logs=globals.logs
+        # log=globals.log[-1] if globals.log else None
     )
 
 
@@ -153,7 +183,7 @@ def game_over_page():
     if globals.user is None:
         return redirect(url_for('home_page'))
 
-    return render_template("game_over.html")
+    return render_template("game_over.html", user=globals.user)
 
 
 @globals.app.route('/end_game')
@@ -162,7 +192,8 @@ def end_game_page():
     if globals.user is None:
         return redirect(url_for('home_page'))
 
-    return render_template("end_game.html")
+    return render_template("end_game.html", user=globals.user)
+
 
 # ##########################
 # ## METHOD HANDLING
@@ -224,18 +255,17 @@ def create_hero():
         return redirect(url_for('home_page'))
 
     if request.method == 'POST':
-        if Hero.check_hero_available(request.form['name_of_the_hero']):
-            globals.pp.pprint(f"sex input : {request.form}")
+        if Hero.check_hero_available(request.form['new_hero_name']):
             tmp_hero = Hero(
-                request.form['name_of_the_hero'],  # name
-                1,  # lvl
-                request.form['weapon_of_the_hero'],  # weapon
-                10,  # armor
-                request.form['passive_of_the_hero'],  # passive
-                globals.user.id,  # user_id
-                True if request.form['sex_of_the_hero'] == 'female' else False,  # sex
-                1,  # current_quest
-                1  # current_step
+                _name=request.form['new_hero_name'],  # name
+                _lvl=1,  # lvl
+                _weapon=request.form['new_hero_weapon'],  # weapon
+                _armor=50,  # armor TODO : modifier ?
+                _passive=request.form['new_hero_passive'],  # passive
+                _user_id=globals.user.id,  # user_id
+                _sex=request.form['new_hero_sex'],  # sex
+                _quest_num=1,  # current_quest
+                _step_num=1  # current_step
             )
             tmp_hero.load_to_db()
             globals.user.add_hero(tmp_hero)
@@ -258,12 +288,21 @@ def game_compute():
             globals.user.selected_hero.current_step = 1
 
         if "userChoice" in request.form:
-            log = eval(f"globals.quest{globals.user.selected_hero.current_quest}")(request.form['userChoice'])
-            globals.log.append(log)
-            if not log:
+            status = eval(f"src.computing_quest.quest{globals.user.selected_hero.current_quest}")(request.form['userChoice'])
+
+            if status == "game_over":
                 return redirect(url_for("game_over_page"))
 
-            elif log == "end_game":
+            elif status == "fight" or status == "start_fight":
+                return redirect(url_for("game_fight_page"))
+
+            elif status == "end_game":
                 return redirect(url_for("end_game_page"))
 
-    return redirect(url_for("game_page"))
+        if "continue_quest" in request.form:  # TODO : utile ?
+            if globals.questbook\
+                    .get_quest_by_number(globals.user.selected_hero.current_quest)\
+                    .get_step_by_number(globals.user.selected_hero.current_step).text == "Fight":
+                globals.user.selected_hero.current_step -= 1
+
+    return redirect(url_for("game_storytelling_page"))

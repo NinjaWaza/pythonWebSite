@@ -1,5 +1,5 @@
-from src.database import Database
-from src.step import Step
+from src.classes.database import Database
+from src.classes.step import Step
 
 
 class Quest:
@@ -57,7 +57,7 @@ class Quest:
     # ## METHODS
     # ##############
 
-    def get_a_step_by_number(self, _value):
+    def get_step_by_number(self, _value):
         """ Return the m_steps step needed according of the _value, None if no occurrence """
         for step in self.m_steps:
             if step.number == _value:

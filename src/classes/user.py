@@ -1,5 +1,5 @@
-from src.hero import Hero
-from src.database import Database
+from src.classes.hero import Hero
+from src.classes.database import Database
 
 import bcrypt
 
@@ -72,14 +72,15 @@ class User:
             (self.id,)
         )
 
+        # print(f"result: {result}")
         if result is not None:
             for row in result:
                 self.add_hero(Hero(
-                    row[0],   # nameOfTheHero
-                    row[1],   # lvl
-                    row[2],   # weapon
-                    row[3],   # armor
-                    row[4],   # passive
+                    _name=row[0],   # nameOfTheHero
+                    _lvl=row[1],   # lvl
+                    _weapon=row["weapon"],   # weapon
+                    _armor=row[3],   # armor
+                    _passive=row[4],   # passive
                 ))
         else:
             self.m_heroes = None

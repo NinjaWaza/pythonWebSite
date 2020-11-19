@@ -1,5 +1,5 @@
-from src.database import Database
-from src.quest import Quest
+from src.classes.database import Database
+from src.classes.quest import Quest
 
 
 class QuestBook:

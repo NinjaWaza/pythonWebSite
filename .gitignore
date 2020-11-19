@@ -5,4 +5,5 @@ venv
 .vs
 VirtualEnv
 database.db
-VirtualEnv
+VirtualEn
+.DS_Store

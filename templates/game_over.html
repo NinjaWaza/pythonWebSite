@@ -3,5 +3,8 @@
 {% block container %}
     <h1>Nothing to say ... your dead</h1>
     <h3>Noobie</h3>
-    <a href="{{ url_for("game_page") }}">Retry</a>
+    <form action="/game_compute" method="post">
+        <button type="submit" name="continue_quest">Retry</button>
+    </form>
+    <a href="{{ url_for("game_storytelling_page") }}">Retry</a>
 {% endblock %}

@@ -1,14 +1,16 @@
-from src.database import Database
-from src.entity import Entity
+from src.classes.database import Database
+from src.classes.entity import Entity
 
+
+# TODO: mode utile ici ?
 
 class Hero(Entity):
     def __init__(self,  _name, _lvl, _weapon, _armor, _passive, _user_id=None, _sex=None, _quest_num=None, _step_num=None):
-        Entity.__init__(self, _name, _lvl, _weapon, _armor, _passive, None)
-        self.m_user_id = _user_id
-        self.m_sex = _sex
-        self.m_current_quest = _quest_num
-        self.m_current_step = _step_num
+        Entity.__init__(self, _name=_name, _lvl=_lvl, _weapon=_weapon, _armor=_armor, _passive=_passive)
+        self.user_id = _user_id
+        self.sex = _sex
+        self.current_quest = _quest_num
+        self.current_step = _step_num
 
     # Getter
 
@@ -41,8 +43,8 @@ class Hero(Entity):
     def set_user_id(self, value):
         self.m_user_id = value
 
-    def set_sex(self, value):
-        self.m_sex = value
+    def set_sex(self, _value):
+        self.m_sex = True if (_value or _value == 1) else False
 
     def set_current_quest(self, value):
         self.m_current_quest = value
@@ -85,7 +87,7 @@ class Hero(Entity):
             self.weapon = result[1]
             self.armor = result[2]
             self.passive = result[3]
-            self.sex = True if result[4] == 1 else False
+            self.sex = result[4]
             self.user_id = result[5]
             self.current_quest = result[6]
             self.current_step = result[7]
@@ -101,7 +103,7 @@ class Hero(Entity):
                     WHERE nameOfTheHero = ?
                 ''',
                 (self.lvl,
-                 self.weapon,
+                 self.weapon["name"],
                  self.armor,
                  self.passive,
                  1 if self.m_sex else 0,
@@ -118,7 +120,7 @@ class Hero(Entity):
                 ''',
                 (self.name,
                  self.lvl,
-                 self.weapon,
+                 self.weapon["name"],
                  self.armor,
                  self.passive,
                  1 if self.m_sex else 0,

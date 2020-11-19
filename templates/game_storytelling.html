@@ -1,0 +1,29 @@
+{% extends 'game.html' %}
+
+{% block game_display %}
+    {{ step_display }}
+{% endblock %}
+
+{% block game_context_title %}
+    {{ step_context_title }}
+{% endblock %}
+
+{% block game_context_text %}
+    {{ step_context_text }}
+{% endblock %}
+
+{% block game_choice_area %}
+    <form name="" action="{{ url_for('game_compute') }}" method="post">
+        Votre choix ?
+
+        <select name="userChoice">
+            {% for option in step_options %}
+                <option value="{{option["value"]}}">
+                    {{ option["text"] }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Valider</button>
+    </form>
+{% endblock %}

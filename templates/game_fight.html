@@ -1,0 +1,36 @@
+{% extends 'game.html' %}
+
+{% block game_display %}
+    {{ fight_display }}
+{% endblock %}
+
+{% block game_context_title %}
+    {{ fight_context_title }}
+{% endblock %}
+
+{% block game_context_text %}
+    <p style="text-align: center">{{ fight_context_text }}</p>
+    <div>
+        {% if fight_state["round"] == 0 %}
+            Fight Begin !
+        {% else %}
+            {# add some if stuff for mode #}
+            <p>
+                #{{ fight_state["player_1"]["instance"].name }} try to do {{ fight_state["player_1"]["damage"] }} to {{ fight_state["player_2"]["instance"].name }}<br/>
+                | {{ fight_state["player_2"]["instance"].name }} take {{ fight_state["player_2"]["taken"] }}
+            </p>
+            <p>
+                #{{ fight_state["player_2"]["instance"].name }} try to do {{ fight_state["player_2"]["damage"] }} to {{ fight_state["player_1"]["instance"].name }}<br/>
+                | {{ fight_state["player_1"]["instance"].name }} take {{ fight_state["player_1"]["taken"] }}
+            </p>
+        {% endif %}
+    </div>
+    <form action="{{ url_for('game_compute') }}" method="post">
+        <button type="submit" name="userChoice" value="attack">Attack</button>
+        <button type="submit" name="userChoice" value="defence">Defence</button>
+    </form>
+{% endblock %}
+
+{% block game_choice_area %}
+    Fight Mode !
+{% endblock %}
