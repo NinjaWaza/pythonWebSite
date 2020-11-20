@@ -2,14 +2,14 @@ from globals import *
 from src.classes.database import Database
 from Routing import *
 
-# from flask import Flask
-
-# app = Flask(__name__)
 
 app.cli.add_command(Database.init_db_command)
 
 # ###############################
 # print('######## -> Test area')
+
+# TODO : for debug purpose
+
 # print('######## -> Test END')
 # ###############################
 

@@ -94,16 +94,16 @@ class Entity:
     def give_damage(self):
         global weapons
 
-        calcul_passive = 1
+        passive_factor = 1
         if str(self.passive) == "Damaging":
-            calcul_passive = 1.05
+            passive_factor = 1.05
 
         if self.weapon:
             return round(
                 random.randint(
                     self.weapon["damage"] - self.weapon["range"],
                     self.weapon["damage"] + self.weapon["range"]
-                ) * calcul_passive
+                ) * passive_factor
             )
 
     # TODO :  take_damage finish

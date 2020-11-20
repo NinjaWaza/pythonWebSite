@@ -5,26 +5,17 @@ from src.classes.hero import Hero
 
 
 def round_step(_attacker, _target):
+    """ Compute _attacker action against _target and put it into globals fight_state """
     state = globals.fight_state
 
     state[_attacker]["damage"] = state[_attacker]["instance"].give_damage()
     state[_target]["taken"] = state[_target]["instance"].take_damage(state[_attacker]["damage"])
     state[_target]["current_life"] -= state[_target]["taken"]
-
-    print(f"global.fight_state =")
-    globals.pp.pprint(globals.fight_state)
-    print(f"state =")
-    globals.pp.pprint(state)
-    # globals.fight_state[_attacker["name"]]["damage"] = _attacker["instance"].give_damage()
-    # _target["instance"].take_damage(globals.fight_state[_attacker["name"]]["damage"])
-    # globals.fight_state[_target["name"]]["taken"] = globals.fight_state[_target["name"]]["life"] - _target["instance"].life
-    # globals.fight_state[_target["name"]]["life"] = _target["instance"].life
-
-    # TODO : add_log(f"{player_1.name} make {damage} damages to {player_2.name}")
+    globals.add_log(f"{state[_attacker]['instance'].name} make {state[_target]['taken']} damages to {state[_target]['instance'].name}")
 
 
 def fight_round():
-    """ TODO :  """
+    """ Compute fight round action between hero player and monster put it into globals fight_state """
     state = globals.fight_state
 
     state["player_1"]["instance"].mode = state["player_1"]["next_mode"]
@@ -32,8 +23,6 @@ def fight_round():
         round_step(
             "player_1",
             "player_2"
-            # {"name": "player_1", "instance": _player_1},
-            # {"name": "player_2", "instance": _player_2}
         )
 
         if state["player_2"]["current_life"] <= 0:
@@ -46,8 +35,6 @@ def fight_round():
         round_step(
             "player_2",
             "player_1"
-            # {"name": "player_2", "instance": _player_2},
-            # {"name": "player_1", "instance": _player_1}
         )
 
         if state["player_1"]["current_life"] <= 0:
@@ -58,18 +45,14 @@ def fight_round():
     return 0
 
 
-# TODO : plus d'ifentification :
-# plus de J1 j2 ici
-# cree une foncion fight step dans fight loop
-# besoin de gerer le changement de mode au bon moment
 def fight_loop(_value):
     """
         Handle fight computing according to user choice and random monster choice.
-        Return 0 if fight not over, 1 if hero win, -1 if hero loose TODO : edit
+        Return 0 if fight not over, 1 if hero win, -1 if hero loose
     """
     state = globals.fight_state
 
-    # Set battle mode of each opponents
+    # Prepare battle mode set of each opponents
     if isinstance(state["player_1"]["instance"], Hero):
         state["player_1"]["next_mode"] = _value  # TODO : True if _value == "attack" else False
         state["player_2"]["next_mode"] = choices(["attack", "defence"], cum_weights=(0.55, 1.00), k=1)[0]
@@ -77,19 +60,14 @@ def fight_loop(_value):
         state["player_1"]["next_mode"] = choices(["attack", "defence"], cum_weights=(0.55, 1.00), k=1)[0]
         state["player_2"]["next_mode"] = _value  # TODO : True if _value == "attack" else False
 
-    # TODO : remove
-    # globals.user.selected_hero.mode = True if _value == "attack" else False
-    # globals.monster.mode = choices([True, False], cum_weights=(0.65, 1.00), k=1)[0]
-
     globals.fight_state["round"] += 1
 
-    return fight_round()  # TODO : ?
+    return fight_round()
 
 
+# TODO : instanciate mob from here ! and create a dic af mob somewehere
 def fight_init():
-    """
-        TODO : refe
-    """
+    """ Initiate global fight_state and opponents priority """
     state = globals.fight_state
 
     # Check entity priority to determine round order
@@ -102,7 +80,6 @@ def fight_init():
 
     # Initiate fight_state on fight launch
     if globals.fight_state["round"] == -1:
-        # TODO : init fight_state
         state["round"] = 0
 
         state["player_1"]["life_max"] = state["player_1"]["instance"].life

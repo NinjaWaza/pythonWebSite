@@ -2,8 +2,6 @@ from src.classes.database import Database
 from src.classes.entity import Entity
 
 
-# TODO: mode utile ici ?
-
 class Hero(Entity):
     def __init__(self,  _name, _lvl, _weapon, _armor, _passive, _user_id=None, _sex=None, _quest_num=None, _step_num=None):
         Entity.__init__(self, _name=_name, _lvl=_lvl, _weapon=_weapon, _armor=_armor, _passive=_passive)

@@ -34,7 +34,7 @@ class User:
 
     # Setters
 
-    def set_id(self):
+    def set_id(self, _value):
         pass
 
     def set_name(self, _value):
@@ -109,7 +109,7 @@ class User:
         """ Register new user in database with couple(username, password), return True if add, False if doesnt """
         db = Database()
         if db.select_one('''SELECT username FROM user WHERE username LIKE ?''', (_username, )) is not None:
-            return "Username aleady taken"
+            return "Username already taken"
         else:
             pwh = str(bcrypt.hashpw(_password.encode('utf-8'), bcrypt.gensalt()))
             db.update("INSERT INTO user(username,password) VALUES(?,?)", (_username, pwh[2:(len(pwh) - 1)]))

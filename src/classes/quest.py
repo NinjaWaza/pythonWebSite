@@ -119,7 +119,7 @@ class Quest:
 
     def load_to_db(self, _recursive=True):
         """ Persist instance to database, if _recursive is True persist each steps too """
-        db = Database
+        db = Database()
         db.update(
             '''
                 UPDATE quest

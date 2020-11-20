@@ -1,14 +1,8 @@
 from src.classes.hero import Hero
 from src.classes.user import User
-import src.computing_quest
-from src.classes.monster import Monster
-# TODO : remove
 
 import globals
 from flask import render_template, request, redirect, url_for
-
-
-# from markupsafe import escape
 
 
 # ##########################
@@ -148,7 +142,6 @@ def game_storytelling_page():
         step_context_text=step_context['step_context_text'],
         step_options=step_context['step_context_options'],
         logs=globals.logs
-        # log=globals.log[-1] if globals.log else None
     )
 
 
@@ -173,7 +166,6 @@ def game_fight_page():
         fight_context_options=fight_context['fight_context_options'],
         fight_state=globals.fight_state,
         logs=globals.logs
-        # log=globals.log[-1] if globals.log else None
     )
 
 

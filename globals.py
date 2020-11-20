@@ -23,7 +23,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 """ Main entities global instance """
 user = None
-# monster = None TODO
+# TODO : create a dic list
 monster = Monster("Sardaoche", 1, "Hands", 10, "Healing")
 
 
@@ -35,9 +35,6 @@ fight_state = {
     "round": -1,
     "player_1": {
         "instance": None,
-        #"type": "",
-        #"name": "",
-        #"weaponName": "",
         "life_max": 0,
         "current_life": 0,
         "next_mode": "",
@@ -46,9 +43,6 @@ fight_state = {
     },
     "player_2": {
         "instance": None,
-        #"type": "",
-        #"name": "",
-        #"weaponName": "",
         "life_max": 0,
         "current_life": 0,
         "next_mode": "",
@@ -120,81 +114,3 @@ def generate_fight_context():
         'fight_context_text': fight_context_text,
         'fight_context_options': fight_context_options
     }
-
-
-# TODO : plus d'ifentification : kill
-# plus de J1 j2 ici
-# cree une foncion fight step dans fight loop
-# besoin de gerer le changement de mode au bon moment
-def fight_loop(_value):
-    """
-        Handle fight computing according to user choice and random monster choice.
-        Return 0 if fight not over, 1 if hero win, -1 if hero loose
-    """
-    print("Fighting function...")
-    global user
-    global monster
-    global fight_state
-    global logs
-
-    # Set battle mode of each opponents
-    user.selected_hero.mode = True if _value == "attack" else False
-    monster.mode = choices([True, False], cum_weights=(0.65, 1.00), k=1)[0]
-
-    # Check entity priority to determine round order
-    if user.selected_hero.sex:
-        player_1 = user.selected_hero
-        player_2 = monster
-    else:
-        player_1 = monster
-        player_2 = user.selected_hero
-
-    # Initiate fight_state on fight launch
-    if fight_state["round"] == -1:
-        # TODO : init fight_state
-        fight_state["round"] = 0
-
-        fight_state["player_1"]["name"] = player_1.name
-        fight_state["player_1"]["life_max"] = player_1.life
-        fight_state["player_1"]["life"] = fight_state["player_1"]["life_max"]
-        fight_state["player_1"]["weaponName"] = player_1.weapon["name"]
-        fight_state["player_1"]["damage"] = 0
-        fight_state["player_1"]["taken"] = 0
-
-        fight_state["player_2"]["name"] = player_2.name
-        fight_state["player_2"]["life_max"] = player_2.life
-        fight_state["player_2"]["life"] = fight_state["player_2"]["life_max"]
-        fight_state["player_2"]["weaponName"] = player_1.weapon["name"]
-        fight_state["player_2"]["damage"] = 0
-        fight_state["player_2"]["taken"] = 0
-
-    # fight_state["player_1"]["mode"] = ""
-    # fight_state["player_2"]["mode"] = choices(["attack", False], cum_weights=(0.65, 1.00), k=1)
-
-    if player_1.mode:
-        fight_state["player_1"]["damage"] = player_1.give_damage()
-        player_2.take_damage(fight_state["player_1"]["damage"])
-        fight_state["player_2"]["taken"] = fight_state["player_2"]["life"] - player_2.life
-        fight_state["player_2"]["life"] = player_2.life
-        # TODO : add_log(f"{player_1.name} make {damage} damages to {player_2.name}")
-
-        if player_2.life <= 0:
-            fight_state["round"] = -1
-            add_log(f"{player_1.name} kill {player_2.name} !")
-            return -1 if isinstance(player_2, Hero) else 1
-
-    if player_2.mode:
-        fight_state["player_2"]["damage"] = player_2.give_damage()
-        player_1.take_damage(fight_state["player_2"]["damage"])
-        fight_state["player_1"]["taken"] = fight_state["player_1"]["life"] - player_1.life
-        fight_state["player_1"]["life"] = player_1.life
-        # TODO : add_log(f"{player_2.name} make {damage} damages to {player_1.name}")
-
-        if player_1.life <= 0:
-            fight_state["round"] = -1
-            add_log(f"{player_2.name} kill {player_1.name} !")
-            return -1 if isinstance(player_1, Hero) else 1
-
-    fight_state["round"] += 1
-
-    return 0
