@@ -29,7 +29,7 @@ def quest1(_value):
     elif current_step == 2:  # Filler step
         if _value == "stay":
             next_step(1, 2)
-            globals.add_log(f"Quest 1 (step 2) : hero choose to {_value}")
+            globals.add_log(f"Quest 1 (step 2) : hero chooses to {_value}")
 
             return "next_quest"
 
@@ -44,21 +44,21 @@ def quest2(_value):
     if current_step == 1:  # Filler step
         if _value == "stay":
             next_step(2)
-            globals.add_log(f"Quest 2 (step 1) : hero choose to {_value}")
+            globals.add_log(f"Quest 2 (step 1) : hero chooses to {_value}")
 
             return "next_step"
 
     elif current_step == 2:  # Is a PNJ
         if _value == "no":
             next_step(3)
-            globals.add_log(f"Quest 2 (step 2) : hero say {_value}")
+            globals.add_log(f"Quest 2 (step 2) : hero says {_value}")
 
             return "next_step"
 
     elif current_step == 3:  # Is a rich one
         if _value == "no":
             next_step(4)
-            globals.add_log(f"Quest 2 (step 3) : hero say {_value}")
+            globals.add_log(f"Quest 2 (step 3) : hero says {_value}")
 
             return "next_step"
 
@@ -66,7 +66,7 @@ def quest2(_value):
         if _value == "yes":
             next_step(1, 3)
             globals.user.selected_hero.weapon = "Stick"
-            globals.add_log(f"Quest 2 (step 4) : hero say {_value} to the 'Stick'")
+            globals.add_log(f"Quest 2 (step 4) : hero says {_value} to the 'Stick'")
 
             return "next_quest"
 
@@ -90,7 +90,7 @@ def quest3(_value):
         status = fight_loop(_value)
 
         if status == -1:
-            globals.add_log(f"Quest 3 (step 2) : hero dead")
+            globals.add_log(f"Quest 3 (step 2) : hero is dead")
 
         elif status == 1:
             next_step(3)

@@ -11,6 +11,10 @@
             padding: 20px;
             width:65%;
         }
+
+        .deleteAccount{
+            margin-bottom: -15px;
+        }
     </style>
 {% endblock %}
 
@@ -64,13 +68,6 @@
         <p>No available, create your first please !</p>
     {% endif %}
 
-    <div class="deleteAccount">
-        <form method="POST" action="/deleteAccount">
-            <input name="password" type="password" required>
-            <button type="submit" >Delete the account</button>
-        </form>
-    </div>
-
     <div class="create_new_hero">
         <form method="POST" action="/create_hero">
 
@@ -100,6 +97,13 @@
             </select>
 
             <button type="submit" >Create my hero</button>
+        </form>
+    </div>
+
+    <div class="deleteAccount">
+        <form method="POST" action="/deleteAccount">
+            <input name="password" type="password" required>
+            <button type="submit" >Delete the account</button>
         </form>
     </div>
 {% endblock %}
