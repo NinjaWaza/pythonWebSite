@@ -15,19 +15,31 @@
             Fight Begin !
         {% else %}
             {# add some if stuff for mode #}
-            <p>
-                #{{ fight_state["player_1"]["instance"].name }} try to do {{ fight_state["player_1"]["damage"] }} to {{ fight_state["player_2"]["instance"].name }}<br/>
-                | {{ fight_state["player_2"]["instance"].name }} take {{ fight_state["player_2"]["taken"] }}
+            <p class="alert alert-secondary m-3">
+            {% if fight_state["player_1"]["instance"].mode == "attack" %}
+                -> <strong>{{ fight_state["player_1"]["instance"].name }}</strong> try to do <strong>{{ fight_state["player_1"]["damage"] }}</strong>
+                to <strong>{{ fight_state["player_2"]["instance"].name }}</strong>, he take <strong>{{ fight_state["player_2"]["taken"] }}</strong>
+            {% else %}
+                -> <strong>{{ fight_state["player_1"]["instance"].name }}</strong> choose to be defencive</strong>
+            {% endif %}
             </p>
-            <p>
-                #{{ fight_state["player_2"]["instance"].name }} try to do {{ fight_state["player_2"]["damage"] }} to {{ fight_state["player_1"]["instance"].name }}<br/>
-                | {{ fight_state["player_1"]["instance"].name }} take {{ fight_state["player_1"]["taken"] }}
+            <p class="alert alert-secondary m-3">
+            {% if fight_state["player_2"]["instance"].mode == "attack" %}
+                -> <strong>{{ fight_state["player_2"]["instance"].name }}</strong> try to do <strong>{{ fight_state["player_2"]["damage"] }}</strong>
+                to <strong>{{ fight_state["player_1"]["instance"].name }}</strong>, he take <strong>{{ fight_state["player_1"]["taken"] }}</strong>
+            {% else %}
+                -> <strong>{{ fight_state["player_2"]["instance"].name }}</strong> choose to be defencive</strong>
+            {% endif %}
             </p>
         {% endif %}
     </div>
-    <form action="{{ url_for('game_compute') }}" method="post">
-        <button type="submit" name="userChoice" value="attack">Attack</button>
-        <button type="submit" name="userChoice" value="defence">Defence</button>
+    <form class="row justify-content-sm-center mt-3" action="{{ url_for('game_compute') }}" method="post">
+        <div class="col-md-5">
+            <button class="btn-block btn-primary" type="submit" name="userChoice" value="attack">Attack</button>
+        </div>
+        <div class="col-md-5">
+            <button class="btn-block btn-secondary" type="submit" name="userChoice" value="defence">Defence</button>
+        </div>
     </form>
 {% endblock %}
 

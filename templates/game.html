@@ -2,9 +2,9 @@
 
 {% block container %}
 
-    <div id="game_area" style="border: black 5px solid; width: 800px; height: 210px; margin: auto; margin-top:50px;">
+    <div id="game_area" style="border: black 5px solid; width: 800px; height: 300px; margin: auto; margin-top:50px;">
 
-        <div id="game_context" style="background-color: green; width: 790px; height: 200px;">
+        <div id="game_context" style="background-color: green; width: 790px; height: 290px;">
             <div id="game_context_title">
                 {% block game_context_title %}{% endblock %}
             </div>
@@ -25,7 +25,7 @@
     </div>
 
     <div id="log_area" style="background-color: #555555; color: #cccccc; width:50%; text-align: center; margin:auto; margin-top: 15px;">
-        <div style="width:100%; height: 100px; background-color: #485F6E; overflow: auto;">
+        <div style="width:100%; height: 300px; background-color: #485F6E; overflow: auto;">
             <h3>Logs :</h3>
             <ul>
                 {% for log in logs[::-1] %}

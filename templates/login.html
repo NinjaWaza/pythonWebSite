@@ -23,23 +23,53 @@
         <br><br>
         Please login to continue !
     </p>
-    <div class="formLogin">
-        <form action="" method="POST">
-            <label for="username_input">Username :</label>
-            <input type="text" name="username_input" required>
-            <br>
-            <label for="password_input">Password :</label>
-            <input type="password" name="password_input" required>
-            <br><br>
-            <input type="submit" value="Connexion">
-        </form>
-        {% if error_messages %}
-            <div class="error">
-                WARNING :
-                {% for error in error_messages %}
-                    <p>{{ error }}</p>
-                {% endfor %}
+
+    <div class="row justify-content-sm-center">
+        <div class="col-md-6">
+
+            <div class="card">
+                  <h4 class="card-header">Login form</h4>
+
+                  <div class="card-body">
+                        <div class="formRegister">
+                            <form action="" method="POST">
+                                <div class="input-group mb-3">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text" id="username_input">Username</span>
+                                      </div>
+                                      <input class="form-control" type="text" name="username_input" placeholder="Jean PAUL" aria-describedby="username_input" required>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text" id="password_input">Password</span>
+                                      </div>
+                                      <input class="form-control" type="password" name="password_input" placeholder="**secret**" aria-describedby="password_input" required>
+                                </div>
+
+                                <input class="btn btn-success btn-block" type="submit" value="Connexion">
+
+                            </form>
+                        </div>
+                  </div>
+
             </div>
-        {% endif %}
+
+        </div>
     </div>
+
+    <div class="row justify-content-sm-center">
+        <div class="col-md-6 mt-3">
+            {% if error_messages %}
+                <div class="alert alert-warning">
+                    WARNING :
+                    {% for error in error_messages %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+
 {% endblock %}

@@ -3,17 +3,7 @@
 {% block stylesheet %}
     {{ super() }}
     <style>
-        .registerPage{
-            text-align:center;
-            font-size: 35px;
-            margin-top: 30px;
-        }
 
-        .formRegister{
-            text-align:center;
-            font-size: 25px;
-            margin-top: 100px;
-        }
     </style>
 {% endblock %}
 
@@ -25,20 +15,49 @@
             Please create your account with a unique username and a <strong>STRONG</strong> password !
         </p>
     </div>
-    <div class="formRegister">
-        <form action="" method="POST">
-            <label for="username_input">Username :</label>
-            <input name="username_input" type="text" required>
-            <br>
-            <label for="password_input">Password :</label>
-            <input name="password_input" type="password" required>
-            <br>
-            <label for="password_confirm_input">Confirm Password :</label>
-            <input name="password_confirm_input" type="password" required>
-            <br><br>
-            <input type="submit" value="Create an account">
-        </form>
+
+    <div class="row justify-content-sm-center">
+        <div class="col-md-6">
+
+            <div class="card">
+                  <h4 class="card-header">Registration form</h4>
+
+                  <div class="card-body">
+                        <div class="formRegister">
+                            <form action="" method="POST">
+                                <div class="input-group mb-3">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text" id="username_input">Username</span>
+                                      </div>
+                                      <input class="form-control" type="text" name="username_input" placeholder="Jean PAUL" aria-describedby="username_input" required>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text" id="password_input">Password</span>
+                                      </div>
+                                      <input class="form-control" type="password" name="password_input" placeholder="**secret**" aria-describedby="password_input" required>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text" id="password_confirm_input">Confirm pwd</span>
+                                      </div>
+                                      <input class="form-control" type="text" name="password_confirm_input" placeholder="**secret**" aria-describedby="password_confirm_input" required>
+                                </div>
+
+                                <input class="btn btn-success btn-block" type="submit" value="Create an account">
+
+                            </form>
+                        </div>
+                  </div>
+
+            </div>
+
+        </div>
     </div>
+
+
     {% if error_messages %}
             <div class="error">
                 WARNING :

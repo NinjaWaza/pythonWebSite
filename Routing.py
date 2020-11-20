@@ -254,7 +254,7 @@ def create_hero():
                 _armor=50,  # armor TODO : Pour équilibrage
                 _passive=request.form['new_hero_passive'],  # passive
                 _user_id=globals.user.id,  # user_id
-                _sex=request.form['new_hero_sex'],  # sex
+                _sex= True if request.form['new_hero_sex'] == "female" else False,  # sex
                 _quest_num=1,  # current_quest
                 _step_num=1  # current_step
             )
