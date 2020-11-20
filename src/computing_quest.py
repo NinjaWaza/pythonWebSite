@@ -65,7 +65,7 @@ def quest2(_value):
     elif current_step == 4:  # Offer stick
         if _value == "yes":
             next_step(1, 3)
-            globals.user.selected_hero.weapon = "Stick"  # TODO : change weapon is working ?
+            globals.user.selected_hero.weapon = "Stick"
             globals.add_log(f"Quest 2 (step 4) : hero say {_value} to the 'Stick'")
 
             return "next_quest"

@@ -5,6 +5,7 @@ from random import choices
 from src.classes.questBook import QuestBook
 from src.classes.monster import Monster
 from src.classes.hero import Hero
+from src.classes.entity import monsters
 
 """ Flask app global instance """
 app = Flask(__name__)
@@ -23,8 +24,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 """ Main entities global instance """
 user = None
-# TODO : create a dic list
-monster = Monster("Sardaoche", 1, "Hands", 10, "Healing")
+monster = None
 
 
 """ Questbook global instance """

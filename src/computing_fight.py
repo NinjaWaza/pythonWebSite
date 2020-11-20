@@ -1,7 +1,9 @@
 from random import choices
 
 import globals
+from src.classes.entity import monsters
 from src.classes.hero import Hero
+from src.classes.monster import Monster
 
 
 def round_step(_attacker, _target):
@@ -54,21 +56,32 @@ def fight_loop(_value):
 
     # Prepare battle mode set of each opponents
     if isinstance(state["player_1"]["instance"], Hero):
-        state["player_1"]["next_mode"] = _value  # TODO : True if _value == "attack" else False
+        state["player_1"]["next_mode"] = _value
         state["player_2"]["next_mode"] = choices(["attack", "defence"], cum_weights=(0.55, 1.00), k=1)[0]
     else:
         state["player_1"]["next_mode"] = choices(["attack", "defence"], cum_weights=(0.55, 1.00), k=1)[0]
-        state["player_2"]["next_mode"] = _value  # TODO : True if _value == "attack" else False
+        state["player_2"]["next_mode"] = _value
 
     globals.fight_state["round"] += 1
 
     return fight_round()
 
 
-# TODO : instanciate mob from here ! and create a dic af mob somewehere
 def fight_init():
     """ Initiate global fight_state and opponents priority """
     state = globals.fight_state
+
+    # Instantiate monster
+    tmp_step = globals.questbook.get_quest_by_number(globals.user.selected_hero.current_quest) \
+        .get_step_by_number(globals.user.selected_hero.current_step)
+
+    globals.monster = Monster(
+        monsters[tmp_step.options]["name"],
+        monsters[tmp_step.options]["lvl"],
+        monsters[tmp_step.options]["weapon"],
+        monsters[tmp_step.options]["armor"],
+        monsters[tmp_step.options]["passive"]
+    )
 
     # Check entity priority to determine round order
     if globals.user.selected_hero.sex:

@@ -1,5 +1,6 @@
 from src.classes.hero import Hero
 from src.classes.user import User
+import src.computing_quest
 
 import globals
 from flask import render_template, request, redirect, url_for
@@ -32,7 +33,6 @@ def error_page_500(_event):
 # ##########################
 
 
-# TODO : favicone ? Style.css menu
 @globals.app.route('/', methods=['POST', 'GET'])
 def home_page():
     """ Handle GET / and POST / request, Home page function """
@@ -145,7 +145,6 @@ def game_storytelling_page():
     )
 
 
-# TODO : passer en /game/ ?
 @globals.app.route('/fight', methods=['GET'])
 def game_fight_page():
     """ Handle GET /fight request, Game fight display page function """
@@ -252,7 +251,7 @@ def create_hero():
                 _name=request.form['new_hero_name'],  # name
                 _lvl=1,  # lvl
                 _weapon=request.form['new_hero_weapon'],  # weapon
-                _armor=50,  # armor TODO : modifier ?
+                _armor=50,  # armor TODO : Pour équilibrage
                 _passive=request.form['new_hero_passive'],  # passive
                 _user_id=globals.user.id,  # user_id
                 _sex=request.form['new_hero_sex'],  # sex
@@ -291,7 +290,7 @@ def game_compute():
             elif status == "end_game":
                 return redirect(url_for("end_game_page"))
 
-        if "continue_quest" in request.form:  # TODO : utile ?
+        if "continue_quest" in request.form:
             if globals.questbook\
                     .get_quest_by_number(globals.user.selected_hero.current_quest)\
                     .get_step_by_number(globals.user.selected_hero.current_step).text == "Fight":

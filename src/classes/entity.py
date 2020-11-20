@@ -8,6 +8,11 @@ weapons = {
     "Axe": {"name": "Axe", "damage": 8, "range": 8}
 }
 
+monsters = {
+    "Chiper_the_fox": {"name": "Chiper the fox", "lvl": 1, "weapon": "Hands", "armor": 20, "passive": "Healing"},
+    "Sardoche": {"name": "Sardaoche", "lvl": 50, "weapon": "Stick", "armor": 70, "passive": "Healing"}
+}
+
 
 class Entity:
     def __init__(self, _name, _lvl, _weapon, _armor, _passive):
@@ -26,7 +31,7 @@ class Entity:
         self.weapon = _weapon
         self.armor = _armor
         self.passive = _passive
-        self.life = 15  # TODO : Change for the final program
+        self.life = 15  # TODO : pour equilibrer
         self.mode = "Attack"  # Defend | Attack
 
     # Getter
@@ -90,7 +95,6 @@ class Entity:
     # ## METHODS
     # ##############
 
-    # TODO : give_damage finish
     def give_damage(self):
         global weapons
 
@@ -106,7 +110,6 @@ class Entity:
                 ) * passive_factor
             )
 
-    # TODO :  take_damage finish
     def take_damage(self, _damage):
         passive_factor = 1
 
